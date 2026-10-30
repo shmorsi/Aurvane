@@ -107,7 +107,7 @@ class Guard:
             return Decision(BLOCK, "identity", "Passport signature is invalid")
         if not m.is_valid() or m.agent_id != self.passport.agent_id:
             return Decision(BLOCK, "identity", "Mandate is invalid, expired, or not for this agent")
-        if self.chain is not None and (why := self.chain.problem()):
+        if self.chain is not None and (why := self.chain.problem(self.passport, m)):
             return Decision(BLOCK, "identity", why)
 
         # 2. Scope

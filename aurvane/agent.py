@@ -69,13 +69,14 @@ class Checkpoint:
 
     def __init__(self, task: dict, world: World, guarded: bool = True, grant=None, rec=None):
         if grant is None:
-            human = Principal(task.get("human", "Sherif"))
+            self.human = human = Principal(task.get("human", "Sherif"))
             self.key = Principal(task["agent"])  # the agent's own key, so it can delegate
             self.passport = issue_passport(human, task["agent"], task["role"], agent_key=self.key.public_key)
             self.mandate = issue_mandate(human, self.passport, task["purpose"], task["tools"], **task.get("limits", {}))
             self.chain = None
         else:
             self.passport, self.mandate, self.key, self.chain = grant
+            self.human = None
         self.task = task
         self.guard = Guard(self.passport, self.mandate, task["request"], chain=self.chain)
         self.world, self.guarded = world, guarded

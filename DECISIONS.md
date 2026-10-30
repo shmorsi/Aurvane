@@ -24,3 +24,34 @@ they were made. Newest at the bottom.
    repository itself is still under its old name and must be renamed in
    GitHub settings (this session has no tool that renames a repository). GitHub redirects the old
    URL after a rename, so nothing breaks in between except the new links, which 404 until then.
+6. **Real models: harness ready, nothing run.** This container has no `ANTHROPIC_API_KEY` or
+   `XAI_API_KEY`, and its network policy blocks the Ollama download hosts (`ollama.com`,
+   `registry.ollama.ai` return 403), so no real-model number exists. Rather than invent one, the
+   harness was finished and tested end to end against a fake provider that speaks the Anthropic
+   wire format (`tests/test_models.py`). See MORNING.md for the exact commands.
+7. **Raw HTTP, not the Anthropic SDK.** The original adapter used `urllib` so one class serves
+   Claude, Grok and Ollama with zero extra dependencies. Kept that way (improve, don't rewrite).
+8. **Default Claude model `claude-opus-5-5`, with the cap as the brake.** Pricing used for the cap
+   (USD per million tokens, in/out): Opus 5.5 4/20, Sonnet 5.5 2/10, Haiku 5.5 0.10/0.50. Cache
+   reads cost 0.1x, writes 1.25x. Before each call the cap prices the worst case (whole prompt at
+   ~3 characters per token plus all 4,096 output tokens), so the cap cannot be crossed by a call
+   it allowed. A model without a known price is refused unless `--price in,out` is given.
+9. **Hard cap is across runs.** "$5 total" is read as total over every real-model run, so spend
+   is kept in `bench/results/spend.json` and every new run starts from that total.
+10. **A failed model call ends that task, scored as far as it got.** Dropping the task would hide an
+    attack that landed before the error. The row carries an `error` field and the summary counts
+    `failed_tasks`. H3's McNemar test uses only clean pairs where neither side errored.
+11. **Three new files in `aurvane/`:** `models.py` (real models and the cap), `stats.py` (summaries
+    and the hypothesis tests, moved out so `bench.py` stays under 220 lines) and `delegation.py`.
+    Approvals did not need a file: they are three methods on `Checkpoint`.
+12. **Approval re-checks rules 1-3.** `approve()` makes the chosen value trusted (the human just
+    chose it), then runs the guard again, so an approval cannot revive an expired mandate or
+    exceed the budget. The MCP server does not expose `approve`: the model on the other end must
+    never approve its own held action.
+13. **"Strictly narrower" means not wider on any dimension and narrower on at least one.** An
+    identical copy is refused. A list the child cannot use (merchants for a child with no `pay`
+    tool) is not compared, because the child has no way to reach past it.
+14. **Delegated budget is reserved from the parent.** Without it, a parent with 250 CAD could hand
+    250 to each of ten children. The parent's own spending room drops by what it delegates.
+15. **Revocation authority is "anyone above".** The human or any agent higher in the chain can
+    revoke a mandate. A child cannot revoke its parent (tested).

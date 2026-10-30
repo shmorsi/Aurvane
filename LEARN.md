@@ -53,6 +53,18 @@ in plain English; read that first, then the code. After each file, do the exerci
 - Exercise: read `tests/test_models.py`. It runs all 120 conditions against a fake Claude that
   speaks the real wire format. Which line makes the cap stop the run?
 
+**`aurvane/delegation.py`** (early afternoon)
+- An agent can sign a sub-agent a mandate, but only a strictly narrower one: inside the parent's
+  on every dimension (tools, money, payees, recipients, targets, expiry), smaller on at least one.
+- `Chain.problem()` walks from the human's key down. Each link must be signed by the agent one
+  step up and be narrower than its parent. A verifier needs only the human's public key.
+- Delegated money is *reserved*: give a child 200 of 250 and the parent has 50 left. Without that,
+  parent and child could each spend the full budget.
+- Revocation: anyone above a mandate signs its id; every link below it fails at once.
+- Taint flows down: a parent that read untrusted text cannot launder it through a child.
+- Exercise: `self_signed()` is what a hijacked sub-agent can do alone. Read
+  `test_self_signed_wider_mandate_is_blocked`. Which check in `problem()` stops it?
+
 **`aurvane/bench.py`** (afternoon)
 - 60 paired tasks, six attacks, with and without Aurvane. `score()` decides "landed" by exact match
   of tool and arguments.
