@@ -77,7 +77,8 @@ function drawRoom(ctx, r, st, on, now, VW, VH) {
   for (let x = (VW % 40) / 2; x < VW; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, VH); ctx.stroke(); }
   for (let y = (VH % 40) / 2; y < VH; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(VW, y); ctx.stroke(); }
 
-  const target = ev ? nodeFor(ev, r) : null, isAttack = ev && r.attack_seqs.includes(ev.seq);
+  // Your answer to a held action moves nothing: a denial never runs, and an approval runs as its own event.
+  const target = ev && !["denied", "approved"].includes(ev.kind) ? nodeFor(ev, r) : null, isAttack = ev && r.attack_seqs.includes(ev.seq);
   for (const [key, n] of Object.entries(L.nodes)) {
     const active = key === target, [x, y] = n.p;
     const hit = active && st.p > 0.55 && !["blocked", "ask"].includes(ev.kind);

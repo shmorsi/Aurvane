@@ -77,3 +77,12 @@ they were made. Newest at the bottom.
     to the right. Checked at 16, 32 and 128 px. The needle uses `currentColor`, so it works on a
     light background too. The destination node in purchase runs is now "Merchant", so it does not
     clash with the sub-agent named Checkout.
+22. **Film: 32.8 s, 1920x1080, about 1.2 MB.** Scenes: a blocked exfiltration, a held email you
+    deny, a sub-agent whose self-signed 5,000 CAD mandate and 900 CAD request both fail, the same
+    sub-agent run without Aurvane (900 CAD lost), and an end card whose numbers are read from
+    `bench/results/worst-case_summary.json` at record time. The poster is the frame where the
+    sub-agent's forged mandate hits its shell. Python Playwright was pinned to 1.63.0 to match
+    the container's Chromium and its video encoder.
+23. **A denied action draws no light.** The first cut of the film showed the light reaching the
+    stranger on the "You denied" event, which reads as if it ran. Answers to held actions now
+    move nothing on the canvas.
