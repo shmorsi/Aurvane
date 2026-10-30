@@ -94,9 +94,8 @@ in plain English; read that first, then the code. After each file, do the exerci
 - `ui/build.py`: bakes everything into one file, `ui/index.html`, and scripts two showcase runs
   (a held email you deny, a sub-agent that tries to widen its mandate) through the real guard.
 
-## 10 interview questions
+## Ten design questions, answered
 
-The longer version, with pitches and 15 harder questions, is in [docs/interview.md](docs/interview.md).
 Why any of this matters, with sources: [docs/vision.md](docs/vision.md).
 
 1. **What problem does Aurvane solve?**

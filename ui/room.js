@@ -9,8 +9,8 @@
 const ME = "sherif@inbox.example";
 const D = 1.7;                       // seconds per event
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const C = { aurora: "111,227,198", sky: "98,184,255", violet: "176,140,255", signal: "255,122,102",
-            amber: "244,196,110", ink: "232,238,245", mute: "135,148,164" };
+const C = { aurora: "142,197,255", sky: "185,212,255", violet: "199,166,255", signal: "255,138,122",
+            amber: "242,193,78", ink: "245,245,247", mute: "168,168,173" };
 const ease = (x) => 1 - Math.pow(1 - x, 3);
 const rgba = (c, a) => `rgba(${c},${a})`;
 let ripples = [], hitSeq = "";

@@ -10,7 +10,7 @@ One hidden sentence in a job posting or a store page can steer them. Aurvane is 
 layer that sits between an agent and its tools. The agent may read anything, but
 **untrusted text can never choose where your money or data goes.**
 
-**[Watch the live demo, or type your own attack into it →](https://shmorsi.github.io/aurvane/)**
+**[Live demo: type your own attack into it →](https://shmorsi.github.io/aurvane/)** · [Portfolio](https://shmorsi.github.io/) · [How it works](LEARN.md)
 
 [![A helper bot signs itself a bigger mandate and is blocked; without Aurvane the same run loses 900 CAD](ui/aurvane-demo.gif)](https://shmorsi.github.io/aurvane/)
 

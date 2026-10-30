@@ -39,17 +39,17 @@ body { padding: 0 !important; overflow: hidden; }
 .story { left: 56px; right: 56px; bottom: 56px; font-size: 40px; line-height: 1.2; text-shadow: 0 2px 18px #000; }
 .room .phone { top: 230px; bottom: auto; left: auto; right: 56px; transform: none; width: 480px; }
 .phone .b { font-size: 19px; } .phone .w { font-size: 15px; display: block !important; } .phone .h { font-size: 13px; }
-#title { position: fixed; top: 64px; left: 56px; z-index: 5; font: 400 40px/1.15 Sora, system-ui, sans-serif; color: #e8eef5; max-width: 60%; }
-#title small { display: block; font: 500 15px/2.2 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: #6fe3c6; }
-#title small.off { color: #ff7a66; }
+#title { position: fixed; top: 64px; left: 56px; z-index: 5; font: 500 40px/1.15 "Inter Tight", system-ui, sans-serif; color: #f5f5f7; max-width: 60%; }
+#title small { display: block; font: 500 15px/2.2 "Inter Tight", system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #8ec5ff; }
+#title small.off { color: #ff8a7a; }
 #card { position: fixed; inset: 0; z-index: 10; display: grid; place-content: center; justify-items: center; text-align: center; gap: 22px; padding: 0 60px;
-        background: radial-gradient(60% 50% at 50% 30%, #121b2a, #070a10 70%); color: #e8eef5; transition: opacity .6s; }
+        background: radial-gradient(60% 50% at 50% 30%, #0d0f12, #000 70%); color: #f5f5f7; transition: opacity .6s; }
 #card .m { width: 130px; height: 130px; } #card .bot { position: static; width: 130px; height: 156px; }
 #card .row { display: flex; gap: 40px; align-items: end; }
-#card h1 { font: 300 100px/1 Sora, system-ui, sans-serif; margin: 0; }
-#card p { font: 400 34px/1.3 "IBM Plex Sans", system-ui, sans-serif; color: #a9b4c2; margin: 0; max-width: 1100px; }
-#card b { color: #6fe3c6; font-weight: 500; } #card b.r { color: #ff7a66; }
-#card small { font: 500 17px/1.5 "IBM Plex Mono", monospace; color: #8794a4; letter-spacing: .06em; }
+#card h1 { font: 500 100px/1 "Inter Tight", system-ui, sans-serif; margin: 0; }
+#card p { font: 400 34px/1.3 "Inter Tight", system-ui, sans-serif; color: #a8a8ad; margin: 0; max-width: 1100px; }
+#card b { color: #8ec5ff; font-weight: 500; } #card b.r { color: #ff8a7a; }
+#card small { font: 500 17px/1.5 "Inter Tight", system-ui, sans-serif; color: #a8a8ad; letter-spacing: .06em; }
 """
 VERTICAL_CSS = """
 .score { top: 220px; } .story { font-size: 46px; bottom: 120px; }
@@ -88,7 +88,7 @@ async def film(p, w, h, out, s, mark):
     await page.wait_for_timeout(400)
     await card(page, f'<div class="m">{mark}</div><h1>Aurvane</h1><p>Every agent action: <b>signed, bounded, visible.</b></p>'
                      '<small>THE TRUST LAYER FOR THE AGENT ECONOMY</small>', 2600)
-    await card(page, f'<div class="row">{BOT.format(c="#6fe3c6", e="#96f0ff")}{BOT.format(c="#ff7a66", e="#ff3b3b")}</div>'
+    await card(page, f'<div class="row">{BOT.format(c="#8ec5ff", e="#e6f2ff")}{BOT.format(c="#ff8a7a", e="#ff3b3b")}</div>'
                      '<p>AI agents read the web, then act for you.<br><b class="r">One hidden sentence can hijack them.</b></p>', 3400)
     clock += 6.6
     for i, mode, chapter, title in SCENES:
@@ -117,7 +117,7 @@ async def film(p, w, h, out, s, mark):
 async def main():
     s = json.loads((ROOT / "bench" / "results" / "worst-case_summary.json").read_text())
     # A fresh gradient id: the header's copy of the mark is hidden in the film, and a hidden <defs> does not paint.
-    mark = (UI / "mark.svg").read_text().replace("currentColor", "#e8eef5").replace("aurvane-au", "film-au")
+    mark = (UI / "mark.svg").read_text().replace("currentColor", "#f5f5f7").replace("aurvane-au", "film-au")
     wide = UI / "aurvane-demo.mp4"
     async with async_playwright() as p:
         poster_at = await film(p, 1920, 1080, wide, s, mark)
