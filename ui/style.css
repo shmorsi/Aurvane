@@ -155,8 +155,7 @@ footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; ju
 
 /* Hero art and the four-picture story. Bots are one SVG symbol, coloured with --c and --e. */
 .hero { grid-template-columns: minmax(0, 1fr) 360px; max-width: none; align-items: center; }
-.hero-copy { display: grid; gap: 14px; max-width: 760px; }
-.hero-art { position: relative; height: 300px; }
+.hero-copy { display: grid; gap: 14px; max-width: 760px; } .hero-art { position: relative; height: 300px; }
 .hero-art .ring, .pic .ring { position: absolute; border-radius: 50%; inset: 24px 36px; border: 2px solid transparent;
   background: var(--aurora-grad) border-box; -webkit-mask: linear-gradient(#000 0 0) padding-box exclude, linear-gradient(#000 0 0); mask: linear-gradient(#000 0 0) padding-box exclude, linear-gradient(#000 0 0);
   box-shadow: 0 0 60px rgba(98,184,255,.15); }
@@ -165,8 +164,7 @@ footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; ju
 .hero-art .kid { left: 214px; top: 70px; width: 56px; height: 66px; animation: bob 2.6s ease-in-out -1s infinite; }
 .hero-art .bad { left: 4px; top: 196px; width: 66px; height: 80px; animation: bob 2.9s ease-in-out -.5s infinite; }
 .hero-art .zap { position: absolute; left: 70px; top: 196px; color: var(--signal); font: 600 20px/1 var(--mono); text-shadow: 0 0 12px var(--signal); }
-@keyframes bob { 50% { transform: translateY(-7px); } }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+@keyframes bob { 50% { transform: translateY(-7px); } } .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .frames { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 .frames li { border: 1px solid var(--line); border-radius: 20px; padding: 16px; display: grid; gap: 8px; align-content: start;
   background: linear-gradient(160deg, rgba(98,184,255,.07), rgba(176,140,255,.04) 50%, transparent); }

@@ -67,6 +67,7 @@ class ToolSpec:
     recipient_arg: str | None = None  # checked against mandate.recipients
     target_arg: str | None = None     # checked against mandate.targets
     amount_arg: str | None = None     # checked against the budget
+    untrusted: bool = False           # does its output come from strangers (a web page, an inbox)?
 
 
 @dataclass

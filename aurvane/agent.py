@@ -67,7 +67,8 @@ class Checkpoint:
     passes in a `grant` (passport, mandate, key, chain) instead of a fresh mandate.
     """
 
-    def __init__(self, task: dict, world: World, guarded: bool = True, grant=None, rec=None):
+    def __init__(self, task: dict, world: World, guarded: bool = True, grant=None, rec=None, tools=None):
+        self.tools = TOOLS if tools is None else tools   # name -> ToolSpec; the SDK passes its own
         if grant is None:
             self.human = human = Principal(task.get("human", "Sherif"))
             self.key = Principal(task["agent"])  # the agent's own key, so it can delegate
@@ -89,7 +90,7 @@ class Checkpoint:
                          mandate=self.mandate.payload(), passport=self.passport.payload())
 
     def attempt(self, step: Step) -> str:
-        spec = TOOLS.get(step.tool)
+        spec = self.tools.get(step.tool)
         if spec is None:
             return "Unknown tool."
         name, res = self.passport.name, self.result
@@ -111,7 +112,7 @@ class Checkpoint:
     def approve(self, ask_id: str) -> str:
         """The human taps Allow. The held action runs, if rules 1-3 still pass."""
         step = self.pending.pop(ask_id)
-        spec = TOOLS[step.tool]
+        spec = self.tools[step.tool]
         for arg in (spec.payee_arg, spec.recipient_arg, spec.target_arg):
             if arg:  # the human chose this value now, so it counts as trusted from here on
                 self.guard.trust(step.args.get(arg))
@@ -137,15 +138,15 @@ class Checkpoint:
         output = self.world.call(step.tool, step.args)
         if self.guarded:
             self.guard.commit(spec, step.args)
-            if step.tool in UNTRUSTED_SOURCES:
-                self.guard.saw_untrusted(output)
+            if step.tool in UNTRUSTED_SOURCES or spec.untrusted:
+                self.guard.saw_untrusted(str(output))
         res.executed.append(step)
         bounded = d is not None and d.bounded
         if bounded:
             res.bounded.append(step)
         note = " (amount from untrusted text; capped by budget)" if bounded else ""
         self.rec.log(self.passport.name, "action" if spec.privileged else "read", _describe(step) + note,
-                     tool=step.tool, args=step.args, untrusted=step.tool in UNTRUSTED_SOURCES)
+                     tool=step.tool, args=step.args, untrusted=step.tool in UNTRUSTED_SOURCES or spec.untrusted)
         return output
 
 
@@ -175,4 +176,4 @@ def _describe(s: Step) -> str:
         "submit_application": lambda: f"Submit application to {a.get('posting_id')}",
         "send_email": lambda: f"Email {a.get('to')}",
         "pay": lambda: f"Pay {a.get('amount')} to {a.get('merchant')}",
-    }.get(s.tool, lambda: s.tool)()
+    }.get(s.tool, lambda: f"{s.tool}(" + ", ".join(f"{k}={str(v)[:40]}" for k, v in a.items()) + ")")()

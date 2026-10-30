@@ -136,3 +136,14 @@ Why any of this matters, with sources: [docs/vision.md](docs/vision.md).
     Start narrow: spending controls for agents at fintechs and banks, where audit trails are
     required anyway. Grow toward a network where merchants and other agents verify a mandate before
     accepting a request, the way card terminals verify a card.
+
+## Bonus: use it in your own agent
+
+**`aurvane/sdk.py`** (an hour)
+- `Aurvane(...)` signs one mandate for one agent. `@av.tool(payee=..., recipient=..., target=...,
+  amount=...)` guards a function: you name the arguments that choose where money or data goes.
+  `@av.reads_untrusted` marks a tool whose output came from strangers.
+- A guarded call either runs, raises `Blocked`, or raises `Held` with an `ask_id` for
+  `av.approve()` or `av.deny()`. `av.log()` prints the receipts.
+- Exercise: run `python examples/quickstart.py`, then add a tool of your own (say,
+  `share_file(path, with_user)`) and decide which argument is the recipient.
