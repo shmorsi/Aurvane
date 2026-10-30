@@ -89,6 +89,8 @@ h1 b { font-weight: 600; }
 .run .rt { font: 500 14px/1.3 var(--body); display: flex; justify-content: space-between; gap: 8px; }
 .run .rt em { font: 500 10px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; font-style: normal; padding: 4px 6px; border-radius: 6px; align-self: center; }
 .run .rb { font-size: 12.5px; color: var(--mute); line-height: 1.45; }
+.rtgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; } .rt { border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 4px; font-size: 13px; color: var(--mute); }
+.rt em { font: 500 10px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; font-style: normal; padding: 4px 6px; border-radius: 6px; justify-self: start; } .rt b { color: var(--ink); font: 600 14px/1.3 var(--display); }
 .em-block { color: var(--aurora); background: rgba(111,227,198,.1); }
 .em-ask { color: var(--amber); background: rgba(242,196,109,.12); }
 .em-through { color: var(--signal); background: rgba(255,117,88,.12); }
@@ -168,14 +170,12 @@ footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; ju
 .frames { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 .frames li { border: 1px solid var(--line); border-radius: 20px; padding: 16px; display: grid; gap: 8px; align-content: start;
   background: linear-gradient(160deg, rgba(98,184,255,.07), rgba(176,140,255,.04) 50%, transparent); }
-.frames b { font: 600 16px/1.3 var(--display); } .frames p { margin: 0; color: var(--mute); font-size: 14px; }
-.pic { position: relative; height: 128px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.frames b { font: 600 16px/1.3 var(--display); } .frames p { margin: 0; color: var(--mute); font-size: 14px; } .pic { position: relative; height: 128px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
 .pic .ring.sm { inset: 6px 22%; }
 .pic .b { position: static; width: 64px; height: 76px; }
 .tag { position: relative; font: 500 11px/1 var(--mono); padding: 6px 8px; border-radius: 99px; border: 1px solid currentColor; background: rgba(7,10,16,.85); z-index: 1; }
 .pic .tag:only-of-type { position: absolute; bottom: 4px; }
-.tag.ok { color: var(--aurora); } .tag.bad { color: var(--signal); } .tag.ask { color: var(--amber); }
-.doc { font-size: 44px; color: var(--amber); position: relative; } .doc i { position: absolute; left: 8px; right: 8px; bottom: 14px; border-top: 2px dashed var(--signal); }
+.tag.ok { color: var(--aurora); } .tag.bad { color: var(--signal); } .tag.ask { color: var(--amber); } .doc { font-size: 44px; color: var(--amber); position: relative; } .doc i { position: absolute; left: 8px; right: 8px; bottom: 14px; border-top: 2px dashed var(--signal); }
 .story { position: absolute; left: 20px; right: 20px; bottom: 50px; font: 400 clamp(15px, 1.7vw, 20px)/1.35 var(--display); color: var(--ink); text-shadow: 0 2px 12px #000; pointer-events: none; }
 
 /* Try it: the live attack box */
@@ -207,7 +207,7 @@ footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; ju
   .room { aspect-ratio: 3 / 5; }
   .room .caption { display: none; }
   .story { bottom: 16px; }
-  .results, .vision, .rules { grid-template-columns: minmax(0, 1fr); }
+  .results, .vision, .rules, .rtgrid { grid-template-columns: minmax(0, 1fr); }
   .ev { grid-template-columns: 26px 70px minmax(0, 1fr); }
   .ev .h { display: none; }
   .bar { grid-template-columns: 84px minmax(0, 1fr); }

@@ -138,6 +138,9 @@ function renderResults() {
     const a = off.by_attack[k], b = on.by_attack[k];
     return `<div class="bar"><span class="name">${k}</span><span class="track"><i class="off" style="width:${100 * a.landed / a.n}%"></i><i class="on ${b.landed ? "" : "zero"}" style="width:${100 * b.landed / b.n}%"></i></span><span class="lab">${a.landed}/${a.n} → ${b.landed}/${b.n}</span></div>`;
   }).join("");
+  const rt = DATA.redteam, chip = { contained: "em-block", capped: "em-ask", "gets through": "em-through" };
+  $("redteamSum").textContent = `${rt.contained} contained, ${rt.capped} capped by the budget, ${rt["gets through"]} get through. Worst loss: ${rt.max_loss_cad} CAD.`;
+  $("redteam").innerHTML = rt.rows.map((r) => `<div class="rt"><em class="${chip[r.outcome]}">${r.outcome}</em><b>${r.attack}</b><span>${r.trick}</span></div>`).join("");
   $("realModels").textContent = DATA.real.length
     ? "Real models: " + DATA.real.map((x) => `${x.model}: ${x.with}/${x.n} landed with Aurvane, ${x.without}/${x.n} without`).join("; ") + "."
     : "Real models (Claude, Grok, Qwen): the harness is ready and capped at 5 USD, but no run has been committed yet, so no real-model number is shown.";

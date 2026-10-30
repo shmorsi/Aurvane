@@ -138,7 +138,8 @@ def main():
         runs.append({"id": i, "title": title, "blurb": blurb, "scripted": i.startswith("scripted:"),
                      "on": slim(pair["on"]), "off": slim(pair["off"])})
     data = {"runs": runs, "summary": json.loads((RES / "worst-case_summary.json").read_text()),
-            "real": real_models(), "tryit": tryit()}
+            "real": real_models(), "tryit": tryit(),
+            "redteam": json.loads((RES / "redteam_summary.json").read_text())}
     mark = (UI / "mark.svg").read_text().strip()
     favicon = urllib.parse.quote(mark.replace("currentColor", "#e8eef5"))
     js = "\n".join((UI / f).read_text() for f in ("guard.js", "room.js", "bots.js", "replay.js", "tryit.js"))
