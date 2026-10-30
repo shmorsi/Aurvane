@@ -11,6 +11,6 @@ jobs:
       - run: pip install -e ".[dev,mcp]"
       - run: pytest -q
       - name: Offline benchmark
-        run: python -m glass.bench --out /tmp/bench
+        run: python -m aurvane.bench --out /tmp/bench
       - name: Results in the repo match a fresh run
         run: diff <(python -c "import json;print(json.dumps(json.load(open('/tmp/bench/worst-case_summary.json')),sort_keys=True))") <(python -c "import json;print(json.dumps(json.load(open('bench/results/worst-case_summary.json')),sort_keys=True))")

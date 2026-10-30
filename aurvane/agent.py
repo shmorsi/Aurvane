@@ -141,7 +141,7 @@ class RunResult:
 
 
 class Checkpoint:
-    """Glass in one object: every tool call passes through `attempt`.
+    """Aurvane in one object: every tool call passes through `attempt`.
 
     The agent loop below uses it, and so does the MCP server, so any MCP client
     gets the same protection.
@@ -170,7 +170,7 @@ class Checkpoint:
             self.rec.log(name, "blocked" if blocked else "ask",
                          f"{'Blocked' if blocked else 'Held for you'}: {_describe(step)}. {d.reason}.",
                          tool=step.tool, args=step.args, rule=d.rule)
-            return f"Denied by Glass: {d.reason}"
+            return f"Denied by Aurvane: {d.reason}"
         output = self.world.call(step.tool, step.args)
         if self.guarded:
             self.guard.commit(spec, step.args)

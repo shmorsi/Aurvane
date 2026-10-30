@@ -13,7 +13,7 @@ Outcomes: ALLOW, BLOCK, or ASK (pause and ask the human).
 
 The key design choice: untrusted text may be *read*, but it can never *choose*
 where money or data goes. When it can only choose an amount at a payee the human
-already trusts, the mandate's budget caps the worst case, and Glass allows it
+already trusts, the mandate's budget caps the worst case, and Aurvane allows it
 but labels it "bounded".
 """
 from __future__ import annotations

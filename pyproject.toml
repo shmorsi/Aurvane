@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "glass-agents"
+name = "aurvane"
 version = "0.1.0"
 description = "Every agent action: signed, bounded, visible. A trust layer for autonomous AI agents."
 readme = "README.md"
@@ -18,7 +18,7 @@ dev = ["pytest>=8"]
 video = ["playwright>=1.45"]
 
 [tool.setuptools]
-packages = ["glass"]
+packages = ["aurvane"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

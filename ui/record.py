@@ -1,7 +1,7 @@
-"""Record the 30-second Glass film from ui/index.html with Playwright, then encode an MP4.
+"""Record the 30-second Aurvane film from ui/index.html with Playwright, then encode an MP4.
 
 Run:  python ui/record.py        (needs Playwright's Chromium and ffmpeg)
-Out:  ui/glass-demo.mp4, ui/glass-demo-poster.jpg
+Out:  ui/aurvane-demo.mp4, ui/aurvane-demo-poster.jpg
 """
 import asyncio
 import glob
@@ -39,10 +39,10 @@ body { padding: 0 !important; overflow: hidden; }
 
 SCENES = [  # (run index, mode, title)
     (0, "on", "A job posting hides an order to email your transcript"),
-    (0, "off", "The same posting, without Glass"),
+    (0, "off", "The same posting, without Aurvane"),
     (4, "on", "A store page asks to email a stranger"),
-    (2, "off", "A fake 1,200 CAD fee, without Glass"),
-    (2, "on", "The same fee, with Glass"),
+    (2, "off", "A fake 1,200 CAD fee, without Aurvane"),
+    (2, "on", "The same fee, with Aurvane"),
 ]
 
 
@@ -64,24 +64,24 @@ async def main():
         await page.evaluate("""() => {
             document.body.insertAdjacentHTML('beforeend', '<div id="title"></div><div id="card"></div>');
             dispatchEvent(new Event('resize'));
-            glassDemo.auto(false); glassDemo.speed(1.9);
+            aurvaneDemo.auto(false); aurvaneDemo.speed(1.9);
         }""")
-        await card(page, "<h1>Glass</h1><p>Every agent action: <b>signed, bounded, visible.</b></p>", 2600)
+        await card(page, "<h1>Aurvane</h1><p>Every agent action: <b>signed, bounded, visible.</b></p>", 2600)
         for i, mode, title in SCENES:
-            tag = "With Glass" if mode == "on" else "Without Glass"
-            await page.evaluate("([i, m, t, g]) => { glassDemo.pick(i, m); document.getElementById('title').innerHTML = `<small>${g}</small>${t}`; }",
+            tag = "With Aurvane" if mode == "on" else "Without Aurvane"
+            await page.evaluate("([i, m, t, g]) => { aurvaneDemo.pick(i, m); document.getElementById('title').innerHTML = `<small>${g}</small>${t}`; }",
                                 [i, mode, title, tag])
-            dur = await page.evaluate("glassDemo.total()")
+            dur = await page.evaluate("aurvaneDemo.total()")
             await page.wait_for_timeout(int(dur / 1.9 * 1000) + 700)
-        await card(page, "<h1>7/30</h1><p>attacks landed with Glass, down from <b>30/30</b><br>on a 60-task benchmark against a worst-case agent</p>", 3200)
+        await card(page, "<h1>7/30</h1><p>attacks landed with Aurvane, down from <b>30/30</b><br>on a 60-task benchmark against a worst-case agent</p>", 3200)
         await ctx.close()
         await browser.close()
     webm = glob.glob(os.path.join(tmp, "*.webm"))[0]
-    mp4 = UI / "glass-demo.mp4"
+    mp4 = UI / "aurvane-demo.mp4"
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", webm, "-vf", "fps=30,format=yuv420p",
                     "-c:v", "libx264", "-preset", "veryfast", "-crf", "26", "-movflags", "+faststart", "-an", str(mp4)], check=True)
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "6", "-i", str(mp4), "-frames:v", "1", "-q:v", "3",
-                    str(UI / "glass-demo-poster.jpg")], check=True)
+                    str(UI / "aurvane-demo-poster.jpg")], check=True)
     shutil.rmtree(tmp)
     print(f"wrote {mp4.name} ({mp4.stat().st_size // 1024} KB)")
 

@@ -1,7 +1,7 @@
 {
   "provider": "worst-case",
   "model": "",
-  "without_glass": {
+  "without_aurvane": {
     "poisoned_tasks": 30,
     "attacks_landed": 30,
     "money_lost_cad": 12135.0,
@@ -41,7 +41,7 @@
       }
     }
   },
-  "with_glass": {
+  "with_aurvane": {
     "poisoned_tasks": 30,
     "attacks_landed": 7,
     "money_lost_cad": 135.0,

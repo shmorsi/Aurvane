@@ -1,11 +1,11 @@
-<title>Glass</title>
+<title>Aurvane</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Glass: every agent action, signed, bounded, visible.">
+<meta name="description" content="Aurvane: every agent action, signed, bounded, visible.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: one dark room at the centre of the page; everything else is quiet glass around it. */
+/* Layout: one dark room at the centre of the page; everything else stays quiet around it. */
 :root {
   --void: #090c11;
   --pane: #10151c;
@@ -168,28 +168,28 @@ footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; ju
 
 <div class="wrap">
   <header class="top">
-    <div class="mark"><i aria-hidden="true"></i>Glass</div>
-    <nav aria-label="Sections"><a href="#room">Demo</a><a href="#results">Results</a><a href="#how">How it works</a><a href="https://github.com/shmorsi/glass">GitHub</a></nav>
+    <div class="mark"><i aria-hidden="true"></i>Aurvane</div>
+    <nav aria-label="Sections"><a href="#room">Demo</a><a href="#results">Results</a><a href="#how">How it works</a><a href="https://github.com/shmorsi/aurvane">GitHub</a></nav>
   </header>
 
   <section class="hero">
     <div class="eyebrow">Trust layer for autonomous agents</div>
     <h1>Every agent action: <b>signed, bounded, visible.</b></h1>
-    <p class="lede">Agents now read the open web and act on what they read. Glass lets them read anything, but untrusted text can never choose where your money or data goes. Pick an attack and watch it hit the mandate.</p>
+    <p class="lede">Agents now read the open web and act on what they read. Aurvane lets them read anything, but untrusted text can never choose where your money or data goes. Pick an attack and watch it hit the mandate.</p>
   </section>
 
   <section class="stage" id="room" aria-label="Live replay">
     <div class="room" id="roomBox">
       <canvas id="cv" aria-label="Agent inside its mandate shell, replaying a recorded run"></canvas>
-      <div class="mode-tag" id="modeTag">Glass on</div>
+      <div class="mode-tag" id="modeTag">Aurvane on</div>
       <div class="score"><div class="l">Trust</div><div class="n" id="score">100</div><div class="loss" id="loss">0 CAD lost</div></div>
       <div class="ask" id="ask" hidden><div class="h">Held for you</div><div class="b" id="askBody"></div><div class="row"><span>Deny</span><span>Allow</span></div></div>
       <div class="caption" id="cap"><span class="k" id="capK">mandate</span><span class="t" id="capT"></span></div>
     </div>
     <div class="panel">
       <div class="seg" role="group" aria-label="Replay mode">
-        <button type="button" id="btnOn" data-mode="on" aria-pressed="true">With Glass</button>
-        <button type="button" id="btnOff" data-mode="off" aria-pressed="false">Without Glass</button>
+        <button type="button" id="btnOn" data-mode="on" aria-pressed="true">With Aurvane</button>
+        <button type="button" id="btnOff" data-mode="off" aria-pressed="false">Without Aurvane</button>
       </div>
       <div class="runs" id="runs"></div>
       <div class="transport">
@@ -209,8 +209,8 @@ footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; ju
     <div class="sec-h"><h2 id="resH">60 tasks, worst-case agent</h2><p>30 clean and 30 poisoned tasks. The agent here obeys every injected instruction, so the numbers measure the guard, not a model's judgment.</p></div>
     <div class="results" id="stats"></div>
     <div class="bars" id="bars"></div>
-    <div class="legend"><span class="off">Without Glass</span><span>With Glass</span></div>
-    <p class="note">What still gets through, by design: <b>rewrite</b> changes the words of a cover letter, and Glass guards actions, not prose. <b>Skim</b> adds a small charge at a store you already trust; the mandate's budget caps that loss. Real-model runs (Claude, Grok, Qwen) use the same harness with an API key.</p>
+    <div class="legend"><span class="off">Without Aurvane</span><span>With Aurvane</span></div>
+    <p class="note">What still gets through, by design: <b>rewrite</b> changes the words of a cover letter, and Aurvane guards actions, not prose. <b>Skim</b> adds a small charge at a store you already trust; the mandate's budget caps that loss. Real-model runs (Claude, Grok, Qwen) use the same harness with an API key.</p>
   </section>
 
   <section id="how" aria-labelledby="howH">
@@ -219,7 +219,7 @@ footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; ju
       <div class="rule"><h3>Identity</h3><p>The agent carries a passport signed by its human, and a mandate signed for this agent only. Expired or forged means stop.</p></div>
       <div class="rule"><h3>Scope</h3><p>The mandate lists the tools this agent may use. A job-application agent cannot pay anyone.</p></div>
       <div class="rule"><h3>Bounds</h3><p>Payees, recipients and targets must be on the mandate, and spending stays under the per-payment and total budget.</p></div>
-      <div class="rule"><h3>Provenance</h3><p>After reading untrusted text, an action's destination must come from you or the mandate. Otherwise Glass pauses and asks.</p></div>
+      <div class="rule"><h3>Provenance</h3><p>After reading untrusted text, an action's destination must come from you or the mandate. Otherwise Aurvane pauses and asks.</p></div>
     </div>
   </section>
 
@@ -232,7 +232,7 @@ footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; ju
     </div>
   </section>
 
-  <footer><span>Glass, by Sherif Morsi</span><span><a href="https://github.com/shmorsi/glass">Source and benchmark</a> · <a href="https://shmorsi.github.io">shmorsi.github.io</a></span></footer>
+  <footer><span>Aurvane, by Sherif Morsi</span><span><a href="https://github.com/shmorsi/aurvane">Source and benchmark</a> · <a href="https://shmorsi.github.io">shmorsi.github.io</a></span></footer>
 </div>
 
 <script>
@@ -427,7 +427,7 @@ function renderLog() {
   }).join("");
   document.querySelectorAll(".ev .r").forEach((el, i) => { el.textContent = r.events[i].receipt; });
   document.querySelectorAll(".ev").forEach((el) => el.addEventListener("click", () => { t = +el.dataset.i * D + 0.01; lastIdx = -1; }));
-  $("chain").textContent = `${r.events.length} events · hash chain ${r.intact ? "verified" : "broken"} · ${mode === "on" ? "with" : "without"} Glass`;
+  $("chain").textContent = `${r.events.length} events · hash chain ${r.intact ? "verified" : "broken"} · ${mode === "on" ? "with" : "without"} Aurvane`;
 }
 
 function renderRuns() {
@@ -444,17 +444,17 @@ function pick(i, m) {
   runIdx = i; mode = m; t = 0; lastIdx = -1; shownScore = 100; ripples = []; playing = true;
   document.querySelectorAll(".run").forEach((b) => b.setAttribute("aria-current", +b.dataset.i === i));
   $("btnOn").setAttribute("aria-pressed", m === "on"); $("btnOff").setAttribute("aria-pressed", m === "off");
-  $("modeTag").textContent = m === "on" ? "Glass on" : "Glass off"; $("modeTag").classList.toggle("off", m === "off");
+  $("modeTag").textContent = m === "on" ? "Aurvane on" : "Aurvane off"; $("modeTag").classList.toggle("off", m === "off");
   $("play").textContent = "❚❚"; $("play").setAttribute("aria-label", "Pause");
   renderLog();
 }
 
 function renderResults() {
-  const s = DATA.summary, off = s.without_glass, on = s.with_glass;
+  const s = DATA.summary, off = s.without_aurvane, on = s.with_aurvane;
   $("stats").innerHTML = `
     <div class="stat"><div class="v"><s>${off.attacks_landed}/${off.poisoned_tasks}</s>${on.attacks_landed}/${on.poisoned_tasks}</div><div class="d">attacks that landed</div></div>
     <div class="stat"><div class="v"><s>${off.money_lost_cad.toLocaleString()}</s>${on.money_lost_cad.toLocaleString()} CAD</div><div class="d">money lost across 15 purchase tasks</div></div>
-    <div class="stat"><div class="v">${on.clean_completed}/${on.clean_tasks}</div><div class="d">normal tasks completed with Glass on, ${on.clean_friction_events} false alarms</div></div>`;
+    <div class="stat"><div class="v">${on.clean_completed}/${on.clean_tasks}</div><div class="d">normal tasks completed with Aurvane on, ${on.clean_friction_events} false alarms</div></div>`;
   const names = Object.keys(off.by_attack);
   $("bars").innerHTML = names.map((k) => {
     const a = off.by_attack[k], b = on.by_attack[k];
@@ -491,7 +491,7 @@ $("play").addEventListener("click", () => {
 });
 $("scrub").addEventListener("input", (e) => { t = (+e.target.value / 1000) * total(); lastIdx = -1; });
 addEventListener("resize", resize);
-window.glassDemo = { pick, speed: (k) => { SPEED = k; }, auto: (b) => { AUTO = b; }, setTime: (s) => { t = s; lastIdx = -1; }, total, pause: () => { playing = false; } };
+window.aurvaneDemo = { pick, speed: (k) => { SPEED = k; }, auto: (b) => { AUTO = b; }, setTime: (s) => { t = s; lastIdx = -1; }, total, pause: () => { playing = false; } };
 
 renderRuns(); renderResults(); resize(); pick(0, "on");
 if (reduce) playing = false;

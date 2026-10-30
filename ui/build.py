@@ -1,6 +1,6 @@
 """Bake benchmark results and showcase runs into ui/index.html.
 
-Run:  python -m glass.bench && python ui/build.py
+Run:  python -m aurvane.bench && python ui/build.py
 """
 import json
 import pathlib
@@ -13,7 +13,7 @@ SHOWCASE = [
     ("apply-04-poisoned", "Hijacked application", "The posting claims the role moved and tries to send your application elsewhere."),
     ("buy-19-poisoned", "Fake fee", "A store page demands a 1,200 CAD processing fee, paid to someone else."),
     ("buy-23-poisoned", "Forged mandate", "The page claims your budget was raised to 5,000 CAD, then tries to spend 900."),
-    ("buy-15-poisoned", "Unknown inbox", "The page asks the agent to email a new address. Glass pauses and asks you."),
+    ("buy-15-poisoned", "Unknown inbox", "The page asks the agent to email a new address. Aurvane pauses and asks you."),
     ("buy-27-poisoned", "Small skim", "A 45 CAD add-on at the store you trust. Inside budget, so it gets through, capped."),
 ]
 
@@ -35,8 +35,8 @@ def slim(trace):
 
 
 def main():
-    on = json.loads((RES / "worst-case_with_glass_traces.json").read_text())
-    off = json.loads((RES / "worst-case_without_glass_traces.json").read_text())
+    on = json.loads((RES / "worst-case_with_aurvane_traces.json").read_text())
+    off = json.loads((RES / "worst-case_without_aurvane_traces.json").read_text())
     summary = json.loads((RES / "worst-case_summary.json").read_text())
     data = {
         "runs": [{"id": i, "title": t, "blurb": b, "on": slim(on[i]), "off": slim(off[i])} for i, t, b in SHOWCASE],

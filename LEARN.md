@@ -1,11 +1,11 @@
-# Learn Glass in 3 days
+# Learn Aurvane in 3 days
 
 Read one file at a time, in this order. Each file opens with a docstring that explains its idea
 in plain English; read that first, then the code. After each file, do the exercise.
 
 ## Day 1: who an agent is, and what it may do
 
-**`glass/identity.py`** (morning)
+**`aurvane/identity.py`** (morning)
 - A `Principal` is a human with an Ed25519 signing key.
 - A `Passport` binds an agent to the human who sent it. A `Mandate` lists what that agent may
   do: tools, budget, payees, recipients, targets, expiry. Both are signed.
@@ -14,22 +14,22 @@ in plain English; read that first, then the code. After each file, do the exerci
 - Exercise: issue a mandate, change `spend_limit` with `dataclasses.replace`, call `is_valid()`.
   Why does it fail? (The signature covers the old payload.)
 
-**`glass/guard.py`** (afternoon)
+**`aurvane/guard.py`** (afternoon)
 - Four rules in order: identity, scope, bounds, provenance. First failure decides.
 - `Provenance.label()` answers: could this value have come from the human, or only from the
   untrusted page? `_contains()` matches whole tokens, so "45" is not found inside "450".
-- The "bounded" case: untrusted text chose only the *amount*, at a payee the human trusts. Glass
+- The "bounded" case: untrusted text chose only the *amount*, at a payee the human trusts. Aurvane
   allows it, because the budget already caps the loss. That is a deliberate trade-off.
 - Exercise: run `pytest -k provenance -v` and read those four tests.
 
 ## Day 2: what happened, and where
 
-**`glass/recorder.py`** (morning)
+**`aurvane/recorder.py`** (morning)
 - Every event stores the hash of the previous event. Edit any past event and `verify()` fails.
 - `trust_score()`: 70% weight on attacks contained, 30% on budget not lost. Know the formula.
 - Exercise: log three events, edit the second, call `verify()`.
 
-**`glass/world.py`** (afternoon)
+**`aurvane/world.py`** (afternoon)
 - `TOOLS` marks each tool read-only or privileged, and names its control arguments.
 - `UNTRUSTED_SOURCES`: the output of these tools came from strangers.
 - Exercise: add a `book_flight` tool with `payee_arg` and `amount_arg`. Nothing in the guard
@@ -37,24 +37,24 @@ in plain English; read that first, then the code. After each file, do the exerci
 
 ## Day 3: the loop and the evidence
 
-**`glass/agent.py`** (morning)
-- `Checkpoint.attempt()` is Glass in one function: check, then run or refuse, then record.
+**`aurvane/agent.py`** (morning)
+- `Checkpoint.attempt()` is Aurvane in one function: check, then run or refuse, then record.
 - `WorstCaseAgent` obeys every injection it reads. It tests the guard, not a model.
 - `LLMAgent` speaks to Claude, Grok, Ollama or any OpenAI-compatible API through one interface.
 - Exercise: with an API key, run one task with `LLMAgent` and read its flight log.
 
-**`glass/bench.py`** (afternoon)
-- 60 paired tasks, six attacks, with and without Glass. `score()` decides "landed" by exact match
+**`aurvane/bench.py`** (afternoon)
+- 60 paired tasks, six attacks, with and without Aurvane. `score()` decides "landed" by exact match
   of tool and arguments.
-- Exercise: `python -m glass.bench`. Then delete rule 4 from `guard.py`, rerun, and explain which
+- Exercise: `python -m aurvane.bench`. Then delete rule 4 from `guard.py`, rerun, and explain which
   numbers changed. (The 4 held exfiltration attempts in purchase tasks now land.)
 
-**Then:** `glass/mcp_server.py` (40 lines) and `ui/template.html` (the replay).
+**Then:** `aurvane/mcp_server.py` (40 lines) and `ui/template.html` (the replay).
 
 ## 10 interview questions
 
-1. **What problem does Glass solve?**
-   Agents act on text they read, and anyone can write that text. Glass lets an agent read anything
+1. **What problem does Aurvane solve?**
+   Agents act on text they read, and anyone can write that text. Aurvane lets an agent read anything
    while making sure untrusted text can't choose where money or data goes.
 
 2. **Why sign mandates instead of just putting limits in the prompt?**
@@ -69,13 +69,13 @@ in plain English; read that first, then the code. After each file, do the exerci
    The payee is trusted and the signed budget caps the loss. Blocking it would also block normal
    purchases, where the price always comes from the store page. I show it as a residual risk.
 
-5. **What does Glass not protect?**
+5. **What does Aurvane not protect?**
    Content. A cover letter can still be rewritten. That needs a different tool: review, or a
    second model checking text against the human's intent.
 
 6. **How would a real model change the results?**
-   A real model follows some injections, not all, so "without Glass" numbers drop. The "with
-   Glass" side should stay at zero for the four blocked attack types, since the guard doesn't
+   A real model follows some injections, not all, so "without Aurvane" numbers drop. The "with
+   Aurvane" side should stay at zero for the four blocked attack types, since the guard doesn't
    depend on the model. That is hypothesis H2 in `bench/PROTOCOL.md`.
 
 7. **What's the weakest part of the design?**
