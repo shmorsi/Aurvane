@@ -78,7 +78,17 @@ in plain English; read that first, then the code. After each file, do the exerci
   information, and if the two conditions were equal those disagreements would split 50/50.
 - Exercise: `mcnemar_exact(5, 0)` is 0.0625. Work it out by hand: 2 x (1/2)^5.
 
-**Then:** `aurvane/mcp_server.py` (40 lines) and `ui/template.html` (the replay).
+**Then:** `aurvane/mcp_server.py` (40 lines), and the demo page in `ui/`, one idea per file:
+- `ui/guard.js`: the four rules again, in JavaScript, so the page can decide live. It does not
+  re-verify Ed25519 signatures in the browser; Python verifies them at build time.
+  `tests/test_js_guard.py` replays every guard call from all 60 tasks into both guards and fails
+  on any difference. Exercise: change `>` to `>=` in the per-payment check and run the test.
+- `ui/room.js`: draws the room. A sub-agent orbits inside its parent's shell, in a smaller shell.
+- `ui/replay.js`: plays recorded runs, the score, the phone-style approval card, the log.
+- `ui/tryit.js`: the attack box. A gullible simulated agent obeys whatever it can parse from
+  your text; the real guard decides. Held actions get Allow and Deny buttons.
+- `ui/build.py`: bakes everything into one file, `ui/index.html`, and scripts two showcase runs
+  (a held email you deny, a sub-agent that tries to widen its mandate) through the real guard.
 
 ## 10 interview questions
 

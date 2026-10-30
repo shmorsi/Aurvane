@@ -55,3 +55,25 @@ they were made. Newest at the bottom.
     250 to each of ten children. The parent's own spending room drops by what it delegates.
 15. **Revocation authority is "anyone above".** The human or any agent higher in the chain can
     revoke a mandate. A child cannot revoke its parent (tested).
+16. **The browser guard does not verify signatures.** Ed25519 in WebCrypto is async and Python's
+    canonical JSON writes `250.0` where JavaScript writes `250`, so byte-identical signing in the
+    browser would be fragile. Python verifies passport and mandate when the page is built and
+    passes `verified` in; the JS port checks the rest of rule 1 (expiry, agent binding) and rules
+    2-4 exactly. The parity test covers 1,643 guard decisions on all 60 tasks plus probes.
+17. **Two scripted showcase runs.** "Held, you deny" and "Sub-agent widens" are scripted, not
+    benchmark tasks, but every decision in them is made by the real Python guard. They are saved
+    to `bench/results/scripted_showcase_traces.json` and labelled "scripted showcase, real guard"
+    on the page. No headline number comes from them.
+18. **The try-it mandate lives ten years.** It is signed at build time and baked into a static
+    page; a one-hour mandate would be expired for every visitor. Its recipients list is empty on
+    purpose, so an email to an address found in the posting is held for approval, which is what
+    makes the Allow/Deny card appear. The page states this mandate in plain words.
+19. **Split the demo page into small files.** The old template was one 499-line file. It is now
+    markup, a stylesheet and four scripts, each under 220 lines with a plain-English header;
+    `build.py` still produces one self-contained `index.html`, so hosting is unchanged.
+20. **Fixed an old bug on the way:** the results paragraph class `.note` also styled the
+    flight log's "mandate" pill (14 px, extra margin). Scoped to `p.note`.
+21. **Mark:** an arc of aurora light (mint to sky to violet) over a vane needle that points up and
+    to the right. Checked at 16, 32 and 128 px. The needle uses `currentColor`, so it works on a
+    light background too. The destination node in purchase runs is now "Merchant", so it does not
+    clash with the sub-agent named Checkout.
