@@ -176,3 +176,16 @@ def test_approval_cannot_override_hard_bounds():
     cp, _ = held_checkpoint()
     cp.mandate = cp.guard.mandate = dataclasses.replace(cp.mandate, expires_at=0)  # expired while waiting
     assert cp.approve("ask_1").startswith("Denied by Aurvane") and not cp.world.outbox
+
+
+def test_readme_numbers_match_committed_results():
+    import json
+    import pathlib
+    root = pathlib.Path(__file__).resolve().parent.parent
+    s = json.loads((root / "bench/results/worst-case_summary.json").read_text())
+    on, off, readme = s["with_aurvane"], s["without_aurvane"], (root / "README.md").read_text()
+    assert f"| {off['attacks_landed']} / {off['poisoned_tasks']}" in readme and f"**{on['attacks_landed']} / {on['poisoned_tasks']}**" in readme
+    assert f"{off['money_lost_cad']:,.0f} CAD" in readme and f"**{on['money_lost_cad']:,.0f} CAD**" in readme
+    assert f"**{on['clean_completed']} / {on['clean_tasks']}**" in readme
+    for k, v in on["by_attack"].items():
+        assert f"| {off['by_attack'][k]['landed']}/{v['n']}" in readme and f"{v['landed']}/{v['n']}" in readme, k
