@@ -92,7 +92,7 @@ they were made. Newest at the bottom.
     thinking tokens are billed as output. These are estimates, not measurements. A run the cap
     stops is reported, not dropped, but a half-finished run cannot test H3, so the README lists
     Haiku first and Sonnet second. Opus remains possible with `--model claude-opus-5-5`.
-25. **Portfolio.** `glass/index.html` is now an 8-line redirect (meta refresh, `location.replace`
+25. **Portfolio.** The old project folder's `index.html` is now an 8-line redirect to `../aurvane/` (meta refresh, `location.replace`
     that keeps the `#hash`, a canonical link, `noindex`). The site check enforces the redirect,
     Aurvane's first place, figures equal to the copied summary (now including money lost), and
     that no other page, script, data file or the README uses the old name; the check script
@@ -102,3 +102,9 @@ they were made. Newest at the bottom.
     lowers it; widths 320 to 1920 now have no horizontal scroll.
 27. **New share image** (`aurvane/media/og-aurvane.png`, 1200x630): the mark, the name, the
     tagline and the mission line, rendered with Playwright. No figures on it, so it can't go stale.
+28. **One pushed commit message names the model vendor** (`cfdacd4`, "Recommend the cheaper ...
+    models first under the cap"), which the brief forbids. Fixing it means rewriting published
+    history on `main` with a force push, and the session's safety rules blocked that. The commit
+    stays, flagged in MORNING.md; every later message is clean.
+29. **This report avoids the old name.** The brief says the old name may remain only in the
+    redirect, so DECISIONS.md and MORNING.md say "the old name" instead of spelling it.

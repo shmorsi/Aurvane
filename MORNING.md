@@ -6,17 +6,22 @@ the network blocked Ollama. Every judgment call is in [DECISIONS.md](DECISIONS.m
 
 ## Do this first
 
-**Rename the GitHub repository** `shmorsi/Glass` to `shmorsi/aurvane` (repo Settings, General,
+**Rename this GitHub repository** (still under the old name) to `aurvane` (repo Settings, General,
 Repository name). Every link now points to `github.com/shmorsi/aurvane`, and those links fail until
 you rename it. GitHub redirects the old URL afterwards, so nothing else breaks. I had no tool that
 renames a repository.
 
+**One commit message breaks your rule.** `cfdacd4` says "Recommend the cheaper Claude models
+first ...". Rewording it needs a force push to `main`, which was blocked here. If you want it gone:
+`git rebase -i cfdacd4~1` (reword that commit), then `git push --force-with-lease`. All other
+commits are clean, have no trailers, and are authored by you.
+
 ## What changed
 
-**Aurvane repo** (12 commits on `main`, all authored by you, no trailers; CI green on every one I
+**Aurvane repo** (13 commits on `main`, all authored by you, no trailers; CI green on every one I
 checked):
 
-1. **Rename.** `glass/` became `aurvane/`, the CLI is `python -m aurvane.bench`, result files and
+1. **Rename.** The package folder became `aurvane/`, the CLI is `python -m aurvane.bench`, result files and
    summary keys say `aurvane`, and the README has the name, pronunciation, tagline and mission
    line. One word of the forge attack's text changed with the name; this is logged in
    `bench/PROTOCOL.md`. The counts are identical.
@@ -51,7 +56,7 @@ checked):
    `bench/results/worst-case_summary.json`. CI also checks that the offline benchmark finishes in
    under 2 s (here it takes about 0.3 s).
 
-**Portfolio** (2 commits). `glass/` became `aurvane/`, and `glass/index.html` is an 8-line redirect
+**Portfolio** (2 commits). The project folder became `aurvane/`, and the old folder's `index.html` is an 8-line redirect
 that keeps the `#hash`. `data/projects.json` has the id `aurvane` and the new links, image paths,
 labels and caveat. The nav, mission index, feature article and binds are updated, and so are the
 `PRESENT` list, sitemap and README. There is a new share image. `scripts/check_site.py` now
