@@ -16,6 +16,27 @@ first ...". Rewording it needs a force push to `main`, which was blocked here. I
 `git rebase -i cfdacd4~1` (reword that commit), then `git push --force-with-lease`. All other
 commits are clean, have no trailers, and are authored by you.
 
+## Second pass: futuristic, friendly, reviewer-ready
+
+- **Bots.** The agent, helper bots and attacker are little robots whose eyes show their state;
+  places have icons; the room has a starfield and a perspective floor.
+- **Plain English everywhere.** A four-picture "how it works" strip at the top, and one plain
+  sentence on screen at every replay step (and in the films).
+- **Two new films, both 38.7 s, about 2 MB:** wide 1080p and vertical 1080x1920 for phones, plus a
+  2 MB GIF at the top of the README.
+- **SDK.** `from aurvane import Aurvane`; guard any function with `@av.tool(payee=...)`;
+  `python examples/quickstart.py` shows a hostile page being stopped.
+- **Red team.** `bench/redteam.py`: 12 attacks beyond the benchmark. 8 contained, 2 capped by the
+  budget, 2 get through (shown on the page and in the README, explained in
+  `docs/threat-model.md`).
+- **Docs.** A threat model, an honest "how big could this get" section in the vision doc, and
+  five more interview questions with a mapping to US AI-lab roles.
+- **About "trillions".** The vision doc frames trillions as the *payments volume* that agent
+  mandate checks could protect, not as one company's revenue. Visa earns about 40 billion USD on
+  about 14.2 trillion USD of volume, and a reviewer would catch an inflated claim.
+- 46 tests pass. The demo has no console errors and no horizontal scroll at 390 px and 1440 px,
+  with or without reduced motion.
+
 ## What changed
 
 **Aurvane repo** (13 commits on `main`, all authored by you, no trailers; CI green on every one I

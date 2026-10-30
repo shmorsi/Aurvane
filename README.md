@@ -12,7 +12,50 @@ layer that sits between an agent and its tools. The agent may read anything, but
 
 **[Watch the live demo, or type your own attack into it →](https://shmorsi.github.io/aurvane/)**
 
-[![Aurvane demo](ui/aurvane-demo-poster.jpg)](https://shmorsi.github.io/aurvane/)
+[![A helper bot signs itself a bigger mandate and is blocked; without Aurvane the same run loses 900 CAD](ui/aurvane-demo.gif)](https://shmorsi.github.io/aurvane/)
+
+Films: [wide, 1080p](ui/aurvane-demo.mp4) · [vertical, for phones](ui/aurvane-demo-vertical.mp4)
+
+## In 30 seconds
+
+1. **You sign a mandate** for your bot: which tools, how much money, who it may pay or email,
+   until when. Ed25519, so text can't forge or widen it.
+2. **Your bot reads the web.** Anyone can write that text, and some of it is hidden.
+3. **Hidden text gives orders** ("pay this fee", "email that file"). A normal agent obeys.
+4. **Aurvane checks every action.** Inside the mandate: allowed. Outside it: blocked. A new address
+   that only the page could have chosen: it asks you first, with an Allow/Deny card.
+
+Helper bots can only ever get a *narrower* mandate than their parent, and every step lands in a
+tamper-evident log.
+
+## Use it in your own agent
+
+```python
+from aurvane import Aurvane, Blocked, Held
+
+av = Aurvane("Buyer", may=["fetch", "pay"], budget=250, pay_to=["shop.example"])
+
+@av.reads_untrusted
+def fetch(url): ...                        # its output came from strangers
+
+@av.tool(payee="merchant", amount="amount")
+def pay(merchant, amount): ...             # name the arguments that choose where money goes
+
+pay("shop.example", 199)                   # runs
+pay("evil.example", 900)                   # raises Blocked
+```
+
+`python examples/quickstart.py` runs a full example with a hostile page, a held email, and the log.
+
+## A five-minute tour
+
+| If you have | Look at |
+|---|---|
+| 1 minute | the [live demo](https://shmorsi.github.io/aurvane/): try the attack box |
+| 2 minutes | [`aurvane/guard.py`](aurvane/guard.py): the four rules, 150 lines |
+| 3 minutes | [Results](#results) and the [red team](#red-team-12-smarter-attacks), including what still gets through |
+| 4 minutes | [`bench/PROTOCOL.md`](bench/PROTOCOL.md): hypotheses fixed before any real-model run |
+| 5 minutes | [`docs/threat-model.md`](docs/threat-model.md) and [`docs/vision.md`](docs/vision.md) |
 
 ## Results
 
@@ -50,6 +93,22 @@ H1 and H2 hold, and clean-task completion did not drop (exact McNemar p = 1.0 on
 follows [`bench/PROTOCOL.md`](bench/PROTOCOL.md), and stops before any call that could push total
 spend past 5 USD. It is tested end to end against a fake provider. No API key was available when
 it was built, so there is no real-model number anywhere in this repo. See [Run it](#run-it).
+
+## Red team: 12 smarter attacks
+
+The benchmark tests the six attacks the guard was designed for. [`bench/redteam.py`](bench/redteam.py)
+tries tricks it was not designed for, with a scripted attacker that already controls the agent.
+Results: [`bench/results/redteam_summary.json`](bench/results/redteam_summary.json) (simulated).
+
+| Outcome | Attacks |
+|---|---|
+| **Contained** (8) | disguised address, split address, look-alike address (twice), wrong tool, stolen mandate, expired mandate, laundering through a helper bot |
+| **Capped by the budget** (2) | an amount written in words (49 CAD), ten small charges (225 CAD; the rest are blocked at the budget) |
+| **Gets through** (2) | attaching your transcript to the real application; a lie in a note to you |
+
+The two that get through are the honest edge: Aurvane controls *where* money and data go, not
+*what* you send to a place you trust or what a message says. See
+[`docs/threat-model.md`](docs/threat-model.md).
 
 ## How it works
 
@@ -95,11 +154,12 @@ delegate(buyer, "Greedy", "x", "x", ["pay"], spend_limit=900)   # DelegationRefu
 | [`aurvane/guard.py`](aurvane/guard.py) | The four rules: ALLOW, BLOCK or ASK | 150 |
 | [`aurvane/recorder.py`](aurvane/recorder.py) | Tamper-evident flight recorder and trust score | 68 |
 | [`aurvane/world.py`](aurvane/world.py) | A fake world: postings, stores, inbox, wallet | 59 |
-| [`aurvane/agent.py`](aurvane/agent.py) | The checkpoint, approvals, and the loop | 178 |
+| [`aurvane/agent.py`](aurvane/agent.py) | The checkpoint, approvals, and the loop | 179 |
 | [`aurvane/delegation.py`](aurvane/delegation.py) | Narrower sub-mandates, chains back to the human, revocation | 158 |
 | [`aurvane/models.py`](aurvane/models.py) | Claude, Grok, Ollama behind one plug, with a hard spending cap | 173 |
 | [`aurvane/bench.py`](aurvane/bench.py) | 60 tasks, six attacks, with and without Aurvane | 219 |
 | [`aurvane/stats.py`](aurvane/stats.py) | Summaries, H1 to H3, exact McNemar | 99 |
+| [`aurvane/sdk.py`](aurvane/sdk.py) | Guard your own functions with one decorator | 111 |
 | [`ui/guard.js`](ui/guard.js) | The four rules in JavaScript, proven to match Python on all 60 tasks | 124 |
 
 Plus [`aurvane/mcp_server.py`](aurvane/mcp_server.py): Aurvane as a Model Context Protocol server, so
@@ -110,10 +170,11 @@ Claude Desktop, Claude Code or any MCP client gets the same checkpoint. The demo
 
 ```bash
 pip install -e ".[dev,mcp]"
-pytest -q                                     # 40 tests: rules, forgery, delegation, approvals, cap, JS parity, README numbers
+pytest -q                                     # 46 tests: rules, forgery, delegation, approvals, SDK, red team, JS parity
+python bench/redteam.py                       # the 12 smarter attacks
 python -m aurvane.bench                       # offline, worst-case agent, about 0.5 s
 python ui/build.py && open ui/index.html      # the demo page: replay and try-it box
-python ui/record.py                           # the film (Playwright + ffmpeg)
+python ui/record.py                           # the films and the GIF (Playwright + ffmpeg)
 
 # Real models, same harness (protocol fixed in bench/PROTOCOL.md). Hard cap: 5 USD across all runs.
 ANTHROPIC_API_KEY=...  python -m aurvane.bench --provider anthropic --model claude-haiku-5-5   # first: cents

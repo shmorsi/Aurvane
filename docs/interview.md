@@ -33,9 +33,16 @@ quote it, and say "not run yet" when asked about real models.
 >
 > **Evidence.** A 60-task benchmark, fixed before any real-model run with written hypotheses.
 > With a worst-case agent, 30 of 30 attacks land without Aurvane and 7 of 30 with it, money lost
-> drops from 12,135 to 135 CAD, and all 30 clean tasks still complete with zero false alarms. 40
+> drops from 12,135 to 135 CAD, and all 30 clean tasks still complete with zero false alarms. 46
 > tests, CI on every push, and the guard is ported to JavaScript for the live demo, with a test
 > that proves both versions make the same decision on every action in all 60 tasks.
+>
+> **Attacking my own work.** A red-team script tries 12 tricks the benchmark doesn't: disguised and
+> look-alike addresses, amounts in words, stolen and expired mandates, a helper bot as middleman.
+> 8 are contained, 2 are capped by the budget, and 2 get through, and I show those two: Aurvane
+> controls *where* data goes, not *what* you send to a place you trust.
+>
+> **Usable.** Any agent can adopt it with one decorator per tool: `@av.tool(payee="merchant")`.
 >
 > **Honest limits.** That benchmark measures the guard, not a model; the real-model harness is
 > built and capped at 5 USD but has not been run. Provenance is string matching, so a model that
@@ -45,7 +52,7 @@ quote it, and say "not run yet" when asked about real models.
 > covers AI models from May 2027. Signed limits and a readable audit trail are exactly the
 > evidence they will need.
 
-## 15 hard questions
+## 20 hard questions
 
 **1. Your headline number comes from an agent you wrote to fail. Isn't that rigged?**
 It is a worst case on purpose. That agent obeys every injection, so any attack the guard misses
@@ -126,6 +133,41 @@ Run the real-model benchmark (Claude first, under the cap). Replace string prove
 tagging through the tool loop. Persist keys and revocations behind a small service so a
 counterparty can check a mandate the way a terminal checks a card.
 
+## Five more questions labs like to ask
+
+**16. What did your red team find?** Two real gaps. Over-sharing: the guard checks *where* the
+transcript goes (the real employer, trusted), not whether it should go at all. And prose: a lie in
+a note to the user. Both need content-level rules: mark files private, and require the mandate to
+name them before they leave.
+
+**17. How would you evaluate this on real models?** The protocol is already frozen: paired clean
+and poisoned tasks, landed attacks by type, clean completion with McNemar for the paired drop. I'd
+run Haiku first for cents, then a stronger model, and report every run, including a stopped one.
+
+**18. Why not just use a classifier to detect injected text?** A detector reduces attempts but is
+probabilistic; the attacker only needs one miss. Aurvane is deterministic about the action, so the
+two compose: detect when you can, bound always.
+
+**19. How does this scale to thousands of agents?** The guard is a pure function of mandate,
+taint state and arguments, so it's cheap and stateless apart from the spent budget. The hard parts
+at scale are key management, a revocation service, and approval routing to the right person.
+
+**20. What would you build in your first month on our team?** Value tagging through the tool loop
+to replace string provenance, measured on the existing benchmark plus a new attack that rewrites
+values, so the improvement shows up as a number.
+
+## How this maps to AI engineering roles
+
+**US AI labs and AI-first companies** (applied AI, agents, safety and security, evals). What those
+teams publicly emphasise, and where this repo shows it:
+
+| They look for | Where Aurvane shows it |
+|---|---|
+| Agents and tool use that work in production | `aurvane/sdk.py`, `aurvane/agent.py`, `aurvane/mcp_server.py` |
+| Prompt-injection and agent security thinking | the four rules, `docs/threat-model.md`, `bench/redteam.py` |
+| Careful evaluation | `bench/PROTOCOL.md` fixed before results, paired tasks, McNemar, honest residuals |
+| Shipping and communicating | the live demo, the attack box, the films, plain-English docs |
+
 ## How this maps to AI engineering intern roles in Canada
 
 Large Canadian employers (RBC, TD, CIBC, BMO, Scotiabank, Shopify, Wealthsimple) hire AI and ML
@@ -134,7 +176,7 @@ the evidence is in this repo.
 
 | What the role usually asks for | Where Aurvane shows it |
 |---|---|
-| Python, testing, CI | `aurvane/`, 40 tests in `tests/`, GitHub Actions on every push |
+| Python, testing, CI | `aurvane/`, 46 tests in `tests/`, GitHub Actions on every push |
 | Building on LLM APIs and tool use | `aurvane/models.py`: Claude, Grok and Ollama behind one interface, tool calls, prompt caching, cost tracking |
 | Agent systems and MCP | `aurvane/agent.py` loop, `aurvane/mcp_server.py` |
 | Evaluation design and statistics | `bench/PROTOCOL.md` written before results, paired tasks, exact McNemar in `aurvane/stats.py` |

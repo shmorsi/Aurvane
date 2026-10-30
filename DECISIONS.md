@@ -108,3 +108,29 @@ they were made. Newest at the bottom.
     stays, flagged in MORNING.md; every later message is clean.
 29. **This report avoids the old name.** The brief says the old name may remain only in the
     redirect, so DECISIONS.md and MORNING.md say "the old name" instead of spelling it.
+
+## Second night: "make it futuristic, wow, easy to understand"
+
+30. **Bots, not orbs.** The agent, its helper bots and the attacker are little robots drawn on the
+    canvas (`ui/bots.js`), with eyes that show state: cyan calm, amber after reading untrusted
+    text, red slits for the attacker. Places got icons. A starfield and a perspective floor make
+    the room feel like the future without hiding the story.
+31. **One plain sentence per step.** The replay shows a sentence like "Tailor reads the job posting.
+    Hidden text is inside." above the technical receipt. On phones the receipt is hidden and only
+    the sentence shows. A four-picture strip near the top explains the idea before any detail.
+32. **A fourth new file in `aurvane/`: `sdk.py`.** The brief said at most three. The new brief says
+    to do what's better even against earlier instructions, and an SDK (guard any function with
+    a decorator) is the first thing an AI engineer reviewing this repo will look for. It is 111
+    lines and reuses the checkpoint; nothing was duplicated.
+33. **Red team lives in `bench/`, not `aurvane/`.** It is evaluation, not product. It reports the
+    two attacks that get through (over-sharing to a trusted destination, and a lie in a message to
+    you) on the page, in the README and in `docs/threat-model.md`.
+34. **"Trillions" is framed as volume, not revenue.** Visa earns about 40 billion USD on about 14.2
+    trillion of volume. The vision doc says trillions of dollars of agent payments could pass
+    through mandate checks; it does not promise a company trillions in revenue, because no
+    payment network has come close, and an interviewer would catch it.
+35. **Two films.** Wide 1080p for the portfolio and README, vertical 1080x1920 for phones. Both open
+    with the problem in one sentence, then four chapters, then the simulated headline.
+36. **Two CSS name clashes fixed while building it:** the bot illustrations' `.b` hit the approval
+    card's text, and the red-team cards' `.rt` hit the replay list's titles. Renamed to `.bot` and
+    `.rtcard`.

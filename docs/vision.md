@@ -100,6 +100,30 @@ Steps, each useful on its own:
 4. **Network:** a revocation and verification service that answers "is this mandate still good?"
    in milliseconds, with a small fee per check, like a network fee on a card payment.
 
+## 4b. How big could this get? The honest math
+
+The ambition is a network that checks every agent transaction. The size of the prize is real, but
+it is measured in **volume protected**, not in revenue:
+
+- Visa, the largest card network, reported about **14.2 trillion USD** of payments volume and about
+  **40 billion USD** of net revenue for fiscal 2025 [19][20]. That is roughly 0.3% of volume, after
+  decades and billions of cards.
+- So "trillions of dollars" is a plausible scale for the *payments that pass through mandate checks*
+  if agents become a normal way to buy. It is not a plausible scale for one company's *revenue*.
+  The largest payment network on Earth earns tens of billions.
+
+A ladder that would be worth climbing, each rung a real business on its own:
+
+| Rung | What it is | What would have to be true |
+|---|---|---|
+| 1 | Controls and audit evidence for internal agents at a few banks and fintechs | E-23-style rules make evidence mandatory; the SDK drops into their agent platform |
+| 2 | The default policy layer for regulated firms' agents | Works across frameworks and models; passes security reviews; priced per agent |
+| 3 | Counterparty verification: merchants and APIs check an agent's mandate before acting | A shared format (AP2-compatible) and a revocation service with very high uptime |
+| 4 | A verification network with a small fee per check | Neutral governance, bank issuers as roots of trust, liability rules everyone accepts |
+
+Each rung is less likely than the one before. Rung 1 is a realistic product. Rung 4 is what card
+networks took decades to build, with banks as owners.
+
 ## 5. Risks
 
 - **The incumbents build it.** Visa, Mastercard, Google, Stripe and Shopify already have the
@@ -156,6 +180,7 @@ regulated firm.
 17. Wealth Professional, "Bank pilots agentic AI workspace, calls it a Canadian banking first" (CIBC, July 2026). <https://www.wealthprofessional.ca/news/industry-news/bank-pilots-agentic-ai-workspace-calls-it-a-canadian-banking-first/393179>
 18. Wealthsimple Q1 2026 results (AI support tools) and a third-party profile of Willow. <https://www.newsfilecorp.com/release/296531>, <https://www.wealthprofessional.ca/company-profiles/wealthsimple/393446>
 19. Visa Inc., Form 10-K for fiscal 2025. <https://www.sec.gov/Archives/edgar/data/1403161/000140316125000089/v-20250930.htm>
+20. Visa Inc., Fiscal 2025 Annual Report (payments volume and net revenue table). <https://s29.q4cdn.com/385744025/files/doc_downloads/2025/Visa-Fiscal-2025-Annual-Report.pdf>
 
 Some sources above are secondary coverage of an announcement rather than the announcement itself;
 they are marked by publisher. Check the primary page before quoting a date or a partner list.

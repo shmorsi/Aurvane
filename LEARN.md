@@ -84,10 +84,13 @@ in plain English; read that first, then the code. After each file, do the exerci
   `tests/test_js_guard.py` replays every guard call from all 60 tasks into both guards and fails
   on any difference. Exercise: change `>` to `>=` in the per-payment check and run the test.
 - `ui/room.js`: draws the room. A sub-agent orbits inside its parent's shell, in a smaller shell.
+- `ui/bots.js`: the cast. One function draws a little robot whose eyes show its state (cyan calm,
+  amber after reading untrusted text, red slits for the attacker); another draws the places.
 - `ui/replay.js`: plays recorded runs, the score, the phone-style approval card, the log.
 - `ui/tryit.js`: the attack box. A gullible simulated agent obeys whatever it can parse from
   your text; the real guard decides. Held actions get Allow and Deny buttons.
-- `ui/record.py`: drives the page with Playwright to record the 33-second film.
+- `ui/record.py`: drives the page with Playwright to record two films (wide and vertical) and a
+  README GIF. Each step shows one plain sentence, written by `story()` in `ui/replay.js`.
 - `ui/build.py`: bakes everything into one file, `ui/index.html`, and scripts two showcase runs
   (a held email you deny, a sub-agent that tries to widen its mandate) through the real guard.
 
@@ -136,6 +139,16 @@ Why any of this matters, with sources: [docs/vision.md](docs/vision.md).
     Start narrow: spending controls for agents at fintechs and banks, where audit trails are
     required anyway. Grow toward a network where merchants and other agents verify a mandate before
     accepting a request, the way card terminals verify a card.
+
+## Bonus: attack it yourself
+
+**`bench/redteam.py`** (an hour)
+- Twelve attacks the benchmark doesn't include. Each is a few lines: build a checkpoint, let the
+  page be read, try the trick, deny anything held, and record what ran.
+- 8 are contained, 2 are capped by the budget, 2 get through. Read `docs/threat-model.md` to see
+  why the last two are out of Aurvane's reach (it controls *where*, not *what*).
+- Exercise: add a thirteenth attack, an address in another alphabet that looks like yours.
+  Predict the outcome before you run it.
 
 ## Bonus: use it in your own agent
 
