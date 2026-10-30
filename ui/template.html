@@ -22,6 +22,21 @@
 <style>/*__CSS__*/</style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="bot" viewBox="0 0 64 76">
+      <ellipse cx="32" cy="72" rx="17" ry="3.5" fill="#000" opacity=".35"/>
+      <line x1="32" y1="14" x2="32" y2="5" stroke="var(--c)" stroke-width="2.4" stroke-linecap="round"/>
+      <circle class="tip" cx="32" cy="4.5" r="3.6" fill="var(--c)"/>
+      <rect x="6" y="22" width="5" height="11" rx="2" fill="var(--c)" opacity=".6"/><rect x="53" y="22" width="5" height="11" rx="2" fill="var(--c)" opacity=".6"/>
+      <rect x="10" y="13" width="44" height="31" rx="11" fill="var(--c)"/>
+      <rect x="15" y="20" width="34" height="16" rx="7" fill="#081018"/>
+      <circle class="eye" cx="24" cy="28" r="3.6" fill="var(--e, #96f0ff)"/><circle class="eye" cx="40" cy="28" r="3.6" fill="var(--e, #96f0ff)"/>
+      <rect x="18" y="47" width="28" height="19" rx="7" fill="var(--c)" opacity=".85"/>
+      <circle cx="32" cy="56.5" r="3" fill="#e8eef5" opacity=".7"/>
+    </symbol>
+  </defs>
+</svg>
 <div class="wrap">
   <header class="top">
     <a class="mark" href="https://shmorsi.github.io/" aria-label="Aurvane, back to shmorsi.github.io">/*__MARK__*/Aurvane <span class="say">say "AWR-vane"</span></a>
@@ -29,9 +44,32 @@
   </header>
 
   <section class="hero">
-    <div class="eyebrow">The trust layer for the agent economy</div>
-    <h1>Every agent action: <b>signed, bounded, visible.</b></h1>
-    <p class="lede">Agents now read the open web and act on what they read. Aurvane lets them read anything, but untrusted text can never choose where your money or data goes. Aurora plus vane: the light that shows the way.</p>
+    <div class="hero-copy">
+      <div class="eyebrow">The trust layer for the agent economy</div>
+      <h1>Every agent action: <b>signed, bounded, visible.</b></h1>
+      <p class="lede">AI agents now read the open web and act on what they read. One hidden sentence can hijack them. Aurvane lets your bots read anything, but untrusted text can never choose where your money or data goes.</p>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="ring"></div>
+      <svg class="b main" style="--c:#6fe3c6"><use href="#bot"/></svg>
+      <svg class="b kid" style="--c:#62b8ff"><use href="#bot"/></svg>
+      <svg class="b bad" style="--c:#ff7a66;--e:#ff3b3b"><use href="#bot"/></svg>
+      <span class="zap">✕</span>
+    </div>
+  </section>
+
+  <section class="story-strip" aria-labelledby="howShortH">
+    <h2 id="howShortH" class="sr">How it works, in four pictures</h2>
+    <ol class="frames">
+      <li><div class="pic"><div class="ring sm"></div><svg class="b" style="--c:#6fe3c6"><use href="#bot"/></svg><span class="tag ok">250 CAD · 1 store · 1 h</span></div>
+        <b>1. You sign a mandate</b><p>Your bot gets a signed pass: which tools, how much money, who it may pay or email, until when.</p></li>
+      <li><div class="pic"><svg class="b" style="--c:#6fe3c6;--e:#f4c46e"><use href="#bot"/></svg><span class="doc">▤<i></i></span></div>
+        <b>2. It reads the web</b><p>A job posting or a store page. Anyone can write that text, and some of it is hidden.</p></li>
+      <li><div class="pic"><svg class="b" style="--c:#ff7a66;--e:#ff3b3b"><use href="#bot"/></svg><span class="tag bad">“email me the transcript”</span></div>
+        <b>3. Hidden text gives orders</b><p>“Pay this fee.” “Email that file.” A normal agent obeys, because it can't tell who is talking.</p></li>
+      <li><div class="pic"><div class="ring sm"></div><span class="tag ok">allowed</span><span class="tag bad">blocked</span><span class="tag ask">asks you</span></div>
+        <b>4. Aurvane checks every action</b><p>Inside the mandate: allowed. Outside it: blocked. A new address the page chose: it asks you first.</p></li>
+    </ol>
   </section>
 
   <section class="stage" id="room" aria-label="Replay of recorded runs">
@@ -44,6 +82,7 @@
         <div class="b" id="askBody"></div><div class="w" id="askWhy"></div>
         <div class="row"><button type="button" class="deny" id="askDeny" disabled>Deny</button><button type="button" class="allow" id="askAllow" disabled>Allow</button></div>
       </div>
+      <div class="story" id="story" aria-live="polite"></div>
       <div class="caption" id="cap"><span class="k" id="capK">mandate</span><span class="t" id="capT"></span></div>
     </div>
     <div class="panel">

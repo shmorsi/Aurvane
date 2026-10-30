@@ -141,7 +141,7 @@ def main():
             "real": real_models(), "tryit": tryit()}
     mark = (UI / "mark.svg").read_text().strip()
     favicon = urllib.parse.quote(mark.replace("currentColor", "#e8eef5"))
-    js = "\n".join((UI / f).read_text() for f in ("guard.js", "room.js", "replay.js", "tryit.js"))
+    js = "\n".join((UI / f).read_text() for f in ("guard.js", "room.js", "bots.js", "replay.js", "tryit.js"))
     out = (UI / "template.html").read_text()
     for key, value in (("/*__CSS__*/", (UI / "style.css").read_text()), ("/*__FAVICON__*/", favicon),
                        ("/*__MARK__*/", mark), ("/*__JS__*/", js)):

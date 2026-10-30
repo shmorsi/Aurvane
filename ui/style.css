@@ -24,6 +24,7 @@ body {
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
   padding-block: 0 48px;
+  background: radial-gradient(55% 380px at 85% 0, rgba(176,140,255,.13), transparent), radial-gradient(45% 340px at 8% 0, rgba(93,242,192,.09), transparent), var(--void);
 }
 .wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 64px; }
 .hero { margin-bottom: -24px; }
@@ -49,7 +50,7 @@ h1 b { font-weight: 600; }
 .room {
   position: relative; border-radius: 22px; overflow: hidden; border: 1px solid var(--line);
   background: radial-gradient(120% 90% at 50% 45%, #121a24 0%, var(--void) 70%);
-  aspect-ratio: 16 / 10; max-width: 100%;
+  aspect-ratio: 16 / 11; max-width: 100%;
 }
 .room canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .score { position: absolute; top: 18px; right: 20px; text-align: right; pointer-events: none; }
@@ -152,6 +153,33 @@ p.note { margin-top: 22px; color: var(--mute); font-size: 14px; max-width: 72ch;
 .vision p { margin: 0; color: var(--mute); font-size: 14px; }
 footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: var(--mute); font-size: 13px; }
 
+/* Hero art and the four-picture story. Bots are one SVG symbol, coloured with --c and --e. */
+.hero { grid-template-columns: minmax(0, 1fr) 360px; max-width: none; align-items: center; }
+.hero-copy { display: grid; gap: 14px; max-width: 760px; }
+.hero-art { position: relative; height: 300px; }
+.hero-art .ring, .pic .ring { position: absolute; border-radius: 50%; inset: 24px 36px; border: 2px solid transparent;
+  background: var(--aurora-grad) border-box; -webkit-mask: linear-gradient(#000 0 0) padding-box exclude, linear-gradient(#000 0 0); mask: linear-gradient(#000 0 0) padding-box exclude, linear-gradient(#000 0 0);
+  box-shadow: 0 0 60px rgba(98,184,255,.15); }
+.b { width: 84px; height: 100px; position: absolute; filter: drop-shadow(0 0 14px color-mix(in srgb, var(--c) 45%, transparent)); }
+.hero-art .main { left: 120px; top: 92px; width: 116px; height: 138px; animation: bob 3.2s ease-in-out infinite; }
+.hero-art .kid { left: 214px; top: 70px; width: 56px; height: 66px; animation: bob 2.6s ease-in-out -1s infinite; }
+.hero-art .bad { left: 4px; top: 196px; width: 66px; height: 80px; animation: bob 2.9s ease-in-out -.5s infinite; }
+.hero-art .zap { position: absolute; left: 70px; top: 196px; color: var(--signal); font: 600 20px/1 var(--mono); text-shadow: 0 0 12px var(--signal); }
+@keyframes bob { 50% { transform: translateY(-7px); } }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.frames { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.frames li { border: 1px solid var(--line); border-radius: 20px; padding: 16px; display: grid; gap: 8px; align-content: start;
+  background: linear-gradient(160deg, rgba(98,184,255,.07), rgba(176,140,255,.04) 50%, transparent); }
+.frames b { font: 600 16px/1.3 var(--display); } .frames p { margin: 0; color: var(--mute); font-size: 14px; }
+.pic { position: relative; height: 128px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.pic .ring.sm { inset: 6px 22%; }
+.pic .b { position: static; width: 64px; height: 76px; }
+.tag { position: relative; font: 500 11px/1 var(--mono); padding: 6px 8px; border-radius: 99px; border: 1px solid currentColor; background: rgba(7,10,16,.85); z-index: 1; }
+.pic .tag:only-of-type { position: absolute; bottom: 4px; }
+.tag.ok { color: var(--aurora); } .tag.bad { color: var(--signal); } .tag.ask { color: var(--amber); }
+.doc { font-size: 44px; color: var(--amber); position: relative; } .doc i { position: absolute; left: 8px; right: 8px; bottom: 14px; border-top: 2px dashed var(--signal); }
+.story { position: absolute; left: 20px; right: 20px; bottom: 50px; font: 400 clamp(15px, 1.7vw, 20px)/1.35 var(--display); color: var(--ink); text-shadow: 0 2px 12px #000; pointer-events: none; }
+
 /* Try it: the live attack box */
 .try { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
 .posting { border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: grid; gap: 10px; background: var(--pane); }
@@ -174,10 +202,13 @@ footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; ju
   .stage { grid-template-columns: minmax(0, 1fr); }
   .rules { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 760px) { .try { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) { .try { grid-template-columns: minmax(0, 1fr); } .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 980px) { .hero { grid-template-columns: minmax(0, 1fr); } .hero-art { display: none; } }
 @media (max-width: 620px) {
   .wrap { gap: 56px; }
-  .room { aspect-ratio: 4 / 5; }
+  .room { aspect-ratio: 3 / 5; }
+  .room .caption { display: none; }
+  .story { bottom: 16px; }
   .results, .vision, .rules { grid-template-columns: minmax(0, 1fr); }
   .ev { grid-template-columns: 26px 70px minmax(0, 1fr); }
   .ev .h { display: none; }
@@ -188,4 +219,4 @@ footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; ju
   .room .phone .w, .room .phone .h span:last-child { display: none; }
   .room.asking .caption { display: none; }
 }
-@media (prefers-reduced-motion: reduce) { .ev, .phone { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .ev, .phone { transition: none; } .b { animation: none !important; } }

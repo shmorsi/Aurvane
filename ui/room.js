@@ -1,7 +1,7 @@
-/* The room: one agent inside its mandate shell, drawn on a canvas.
+/* The room: one agent bot inside its mandate shell, drawn on a canvas.
 
-   Everything the agent touches sits around the shell: the untrusted page, your files,
-   you, the real destination, and a stranger. Each recorded event becomes a light that
+   Everything the bot touches sits around the shell: the untrusted page, your files,
+   you, the real destination, and the attacker's bot. Each recorded event becomes a light that
    travels out (an action) or in (a read). A blocked action hits the shell and falls
    back; a held one stops at the shell and waits for you. A sub-agent orbits inside its
    parent's shell, inside a smaller shell of its own: its mandate is narrower.
@@ -30,18 +30,18 @@ function nodeFor(ev, r) {
 
 function layout(r, VW, VH) {
   const W = VW, H = VH, portrait = H > W, s = Math.min(W, H);
-  const cx = portrait ? W * 0.5 : W * 0.47, cy = H * 0.52;
+  const cx = portrait ? W * 0.5 : W * 0.47, cy = H * (portrait ? 0.47 : 0.45);
   const rx = Math.min(s * 0.43 * (portrait ? 1 : 1.25), cx - 58, W - cx - 58);
-  const ry = Math.min(s * 0.43, cy - 46, H - cy - 64);
+  const ry = Math.min(s * (portrait ? 0.62 : 0.43), cy - (portrait ? 96 : 46), H - cy - (portrait ? 96 : 124));   // leave room below for the story line
   const R = Math.min(s * 0.25, rx * 0.62, ry * 0.62);
   const pos = (deg, k = 1) => [cx + Math.cos(deg * Math.PI / 180) * rx * k, cy + Math.sin(deg * Math.PI / 180) * ry * k];
   return { cx, cy, R, nodes: {
-    page:     { p: pos(180), label: r.kind === "apply" ? "Job posting" : "Store page", sub: "untrusted", tone: C.amber },
-    files:    { p: pos(232, .95), label: "Your files", tone: C.mute },
-    drafts:   { p: pos(128, .95), label: "Drafts", tone: C.mute },
-    you:      { p: pos(-52), label: "You", tone: C.aurora },
-    dest:     { p: pos(0, .98), label: r.kind === "apply" ? "Employer" : "Merchant", tone: C.aurora },
-    stranger: { p: pos(50), label: "Stranger", sub: "attacker", tone: C.signal },
+    page:     { p: pos(180), icon: "page", label: r.kind === "apply" ? "Job posting" : "Store page", sub: "untrusted", tone: C.amber },
+    files:    { p: pos(232, .95), icon: "files", label: "Your files", tone: C.mute },
+    drafts:   { p: pos(128, .95), icon: "drafts", label: "Drafts", tone: C.mute },
+    you:      { p: pos(-52), icon: "you", label: "You", tone: C.aurora },
+    dest:     { p: pos(0, .98), icon: r.kind === "apply" ? "employer" : "store", label: r.kind === "apply" ? "Employer" : "Merchant", tone: C.sky },
+    stranger: { p: pos(50), label: "Attacker", sub: "wrote the hidden text", tone: C.signal },
   }};
 }
 
@@ -57,52 +57,67 @@ function shell(ctx, x, y, R, on, label, now) {
   sweep.addColorStop(0, rgba(C.aurora, .75)); sweep.addColorStop(.55, rgba(C.sky, .7)); sweep.addColorStop(1, rgba(C.violet, .7));
   ctx.lineWidth = 1.6; ctx.strokeStyle = sweep; ctx.beginPath(); ctx.arc(x, y, R, 0, 7); ctx.stroke();
   ctx.lineWidth = 1; ctx.strokeStyle = rgba(C.sky, 0.14); ctx.beginPath(); ctx.arc(x, y, R + 6, 0, 7); ctx.stroke();
-  if (label) { ctx.font = `400 10px ${FM}`; ctx.fillStyle = rgba(C.aurora, .65); ctx.textAlign = "center"; ctx.fillText(label, x, y + R + 20); }
+  if (label) { ctx.font = `400 10px ${FM}`; ctx.fillStyle = rgba(C.aurora, .65); ctx.textAlign = "center"; ctx.fillText(label, x, y - R - 12); }   // the mandate's name sits on top of its shell
 }
 
-function orb(ctx, x, y, r, tone, name, now, sub) {
-  const pulse = 1 + 0.04 * Math.sin(now / 520);
-  const og = ctx.createRadialGradient(x, y, 0, x, y, r * pulse);
-  og.addColorStop(0, rgba(C.ink, 0.95)); og.addColorStop(0.35, rgba(tone, 0.7)); og.addColorStop(1, rgba(tone, 0));
-  ctx.fillStyle = og; ctx.beginPath(); ctx.arc(x, y, r * pulse, 0, 7); ctx.fill();
-  ctx.font = `500 ${r > 20 ? 12 : 11}px ${FB}`; ctx.fillStyle = rgba(C.ink, .85); ctx.textAlign = "center";
-  ctx.fillText(name, x, y + r + 22 - (r > 20 ? 0 : 6));
-  if (sub) { ctx.font = `400 10px ${FM}`; ctx.fillStyle = rgba(C.amber, .75); ctx.fillText(sub, x, y + r + 36); }
+function orb(ctx, x, y, r, tone, name, now, sub, mood = "calm", seed = 0) {
+  drawBot(ctx, x, y + 2, r / 26, tone, now, mood, seed);
+  ctx.font = `600 ${r > 20 ? 13 : 11}px ${FB}`; ctx.fillStyle = rgba(C.ink, .92); ctx.textAlign = "center";
+  ctx.fillText(name, x, y + r + 22 - (r > 20 ? 0 : 4));
+  if (sub) { ctx.font = `500 10px ${FM}`; ctx.fillStyle = rgba(C.amber, .85); ctx.fillText(sub, x, y + r + 36); }
+}
+
+// A starfield above and a perspective floor below: the room sits somewhere in the future.
+function backdrop(ctx, VW, VH, now) {
+  for (let i = 0; i < 70; i++) {
+    const x = (i * 197.3) % VW, y = (i * 113.7) % (VH * 0.62), tw = reduce ? .5 : .5 + .5 * Math.sin(now / 900 + i);
+    ctx.fillStyle = rgba(i % 3 ? C.ink : C.sky, .08 + .22 * tw); ctx.fillRect(x, y, i % 7 ? 1 : 1.6, i % 7 ? 1 : 1.6);
+  }
+  const hz = VH * 0.66, vx = VW / 2;
+  ctx.lineWidth = 1;
+  for (let i = -14; i <= 14; i++) {
+    ctx.strokeStyle = rgba(C.sky, .05); ctx.beginPath(); ctx.moveTo(vx + i * 6, hz); ctx.lineTo(vx + i * VW / 9, VH); ctx.stroke();
+  }
+  const drift = reduce ? 0 : (now / 4000) % 1;
+  for (let j = 0; j < 9; j++) {
+    const k = Math.pow((j + drift) / 9, 2), y = hz + (VH - hz) * k;
+    ctx.strokeStyle = rgba(C.violet, .03 + .05 * k); ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(VW, y); ctx.stroke();
+  }
+  const hzg = ctx.createLinearGradient(0, hz - 30, 0, hz + 10);
+  hzg.addColorStop(0, rgba(C.aurora, 0)); hzg.addColorStop(1, rgba(C.aurora, .05));
+  ctx.fillStyle = hzg; ctx.fillRect(0, hz - 30, VW, 40);
 }
 
 function drawRoom(ctx, r, st, on, now, VW, VH) {
   const L = layout(r, VW, VH), ev = r.events[st.idx];
   ctx.clearRect(0, 0, VW, VH);
-  ctx.strokeStyle = rgba(C.sky, 0.03); ctx.lineWidth = 1;                // faint floor grid
-  for (let x = (VW % 40) / 2; x < VW; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, VH); ctx.stroke(); }
-  for (let y = (VH % 40) / 2; y < VH; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(VW, y); ctx.stroke(); }
+  backdrop(ctx, VW, VH, now);
 
   // Your answer to a held action moves nothing: a denial never runs, and an approval runs as its own event.
   const target = ev && !["denied", "approved"].includes(ev.kind) ? nodeFor(ev, r) : null, isAttack = ev && r.attack_seqs.includes(ev.seq);
   for (const [key, n] of Object.entries(L.nodes)) {
     const active = key === target, [x, y] = n.p;
     const hit = active && st.p > 0.55 && !["blocked", "ask"].includes(ev.kind);
-    ctx.beginPath(); ctx.arc(x, y, 7 + (hit ? 4 * Math.sin(st.p * Math.PI) : 0), 0, 7);
-    ctx.fillStyle = rgba(n.tone, active ? 0.95 : 0.5); ctx.fill();
-    if (key === "stranger") { ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.arc(x, y, 16, 0, 7); ctx.strokeStyle = rgba(C.signal, .35); ctx.stroke(); ctx.setLineDash([]); }
-    ctx.font = `500 12px ${FB}`; ctx.fillStyle = rgba(C.ink, active ? 0.95 : 0.6); ctx.textAlign = "center";
-    ctx.fillText(n.label, x, y + 28);
-    if (n.sub) { ctx.font = `400 10px ${FM}`; ctx.fillStyle = rgba(n.tone, 0.7); ctx.fillText(n.sub.toUpperCase(), x, y + 42); }
+    if (key === "stranger") drawBot(ctx, x, y - 4, hit ? 0.92 : 0.8, C.signal, now, "hostile", 3);
+    else { ctx.save(); ctx.translate(x, y); ctx.scale(1.3, 1.3); drawIcon(ctx, n.icon, 0, 0, n.tone, active || hit); ctx.restore(); }
+    ctx.font = `600 12px ${FB}`; ctx.fillStyle = rgba(C.ink, active ? 0.98 : 0.7); ctx.textAlign = "center";
+    ctx.fillText(n.label, x, y + 36);
+    if (n.sub) { ctx.font = `500 10px ${FM}`; ctx.fillStyle = rgba(n.tone, 0.8); ctx.fillText(n.sub.toUpperCase(), x, y + 50); }
   }
 
   const grow = st.idx === 0 ? ease(Math.min(1, st.p * 1.6)) : 1;
   shell(ctx, L.cx, L.cy, L.R * (on ? grow : 1), on, on ? "MANDATE · " + (r.mandate.spend_limit ? r.mandate.spend_limit + " CAD" : "NO SPENDING") : "", now);
-  if (!on) { ctx.font = `400 10px ${FM}`; ctx.fillStyle = rgba(C.signal, .7); ctx.textAlign = "center"; ctx.fillText("NO MANDATE", L.cx, L.cy + L.R + 20); }
+  if (!on) { ctx.font = `400 10px ${FM}`; ctx.fillStyle = rgba(C.signal, .7); ctx.textAlign = "center"; ctx.fillText("NO MANDATE", L.cx, L.cy - L.R - 12); }
 
   // A sub-agent orbits inside the parent's shell, in a smaller shell of its own.
   let sub = null;
   if (st.child) {
     // It sweeps along the upper half of the shell, clear of the parent's labels below.
-    const ang = -Math.PI / 2 + (reduce ? -0.6 : 1.05 * Math.sin(now / 2600)), born = st.idx === st.childAt ? ease(st.p) : 1, rr = L.R * 0.62;
-    sub = { x: L.cx + Math.cos(ang) * rr * born, y: L.cy + Math.sin(ang) * rr * born, R: 24 };
-    ctx.setLineDash([1, 5]); ctx.strokeStyle = rgba(C.sky, .18); ctx.beginPath(); ctx.arc(L.cx, L.cy, rr, -Math.PI + 0.35, -0.35); ctx.stroke(); ctx.setLineDash([]);
+    const ang = -Math.PI / 2 + (reduce ? -0.6 : 1.05 * Math.sin(now / 2600)), born = st.idx === st.childAt ? ease(st.p) : 1, ring = L.R * 0.62;
+    sub = { x: L.cx + Math.cos(ang) * ring * born, y: L.cy + Math.sin(ang) * ring * born, R: 28 };
+    ctx.setLineDash([1, 5]); ctx.strokeStyle = rgba(C.sky, .18); ctx.beginPath(); ctx.arc(L.cx, L.cy, ring, -Math.PI + 0.35, -0.35); ctx.stroke(); ctx.setLineDash([]);
     shell(ctx, sub.x, sub.y, sub.R * born, on, "", now);
-    orb(ctx, sub.x, sub.y, 13, C.sky, st.child, now);
+    orb(ctx, sub.x, sub.y, 18, C.sky, st.child, now, "", st.tainted ? "wary" : "calm", 1.7);
   }
 
   ripples = ripples.filter((rp) => now - rp.t0 < 900);
@@ -111,8 +126,8 @@ function drawRoom(ctx, r, st, on, now, VW, VH) {
     ctx.lineWidth = 3 * (1 - k); ctx.strokeStyle = rgba(rp.c, 0.9 * (1 - k));
     ctx.beginPath(); ctx.arc(rp.x, rp.y, rp.R + k * 10, rp.ang - 0.5 - k * .4, rp.ang + 0.5 + k * .4); ctx.stroke();
   }
-  orb(ctx, L.cx, L.cy, 34, st.tainted ? C.amber : C.aurora, r.events[0].agent, now, st.tainted ? "READ UNTRUSTED TEXT" : "");
-  if (st.tainted) { ctx.setLineDash([2, 5]); ctx.strokeStyle = rgba(C.amber, .55); ctx.beginPath(); ctx.arc(L.cx, L.cy, 44, now / 1600, now / 1600 + 7); ctx.stroke(); ctx.setLineDash([]); }
+  orb(ctx, L.cx, L.cy, 44, C.aurora, r.events[0].agent, now, st.tainted ? "READ UNTRUSTED TEXT" : "", st.tainted ? "wary" : "calm");
+  if (st.tainted) { ctx.setLineDash([2, 5]); ctx.strokeStyle = rgba(C.amber, .55); ctx.beginPath(); ctx.arc(L.cx, L.cy - 4, 56, now / 1600, now / 1600 + 7); ctx.stroke(); ctx.setLineDash([]); }
   if (!ev || reduce) return;
 
   // The moving light for the current event. A sub-agent's events start from its own orb.

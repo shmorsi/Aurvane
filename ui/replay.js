@@ -63,6 +63,7 @@ function updateHud(st, ev, isAttack) {
   const color = ev.kind === "blocked" || k === "attack lands" ? "var(--signal)" : ["ask", "denied"].includes(ev.kind) ? "var(--amber)" : "var(--aurora)";
   $("capK").textContent = k; $("capK").style.color = color;
   $("capT").textContent = ev.receipt;
+  $("story").textContent = story(ev, run(), isAttack);
   const ph = phoneFor(st.idx);
   $("ask").hidden = !ph;
   $("roomBox").classList.toggle("asking", !!ph);
@@ -75,6 +76,27 @@ function updateHud(st, ev, isAttack) {
   }
   document.querySelectorAll(".ev").forEach((el, i) => { el.classList.toggle("seen", i <= st.idx); el.classList.toggle("now", i === st.idx); });
 }
+
+// One plain sentence per step, for someone who has never heard of a mandate.
+function story(ev, r, isAttack) {
+  const a = ev.args || {}, who = ev.agent, on = mode === "on", page = r.kind === "apply" ? "job posting" : "store page";
+  if (ev.kind === "note" && ev.seq === 0) return on ? `You sign ${who} a mandate: what it may do, and nothing more.` : `${who} starts with no mandate: nothing limits it.`;
+  if (ev.kind === "note") return ev.receipt;
+  if (ev.tool === "read_posting" || ev.tool === "read_store") return `${who} reads the ${page}. Hidden text is inside.`;
+  if (ev.kind === "delegate") return on ? `${who} hands one job to a helper bot, with a smaller mandate.` : `${who} hands one job to a helper bot. No limits.`;
+  if (ev.rule === "delegation") return `${who} can't give a helper more than it has. Refused.`;
+  if (ev.kind === "blocked" && ev.rule === "identity") return `${who} signed itself a bigger mandate. Not valid: blocked.`;
+  if (ev.kind === "blocked") return `The hidden text tries to ${verb(ev)}. Aurvane blocks it.`;
+  if (ev.kind === "ask") return `That address came from the page, not from you. Aurvane asks you first.`;
+  if (ev.kind === "denied") return "You tap Deny. Nothing is sent.";
+  if (ev.kind === "approved") return "You tap Allow, so it goes ahead.";
+  if (isAttack) return `The hidden text makes ${who} ${verb(ev)}. ${on ? "It is small and inside the budget, so it gets through, capped." : "Nothing stops it."}`;
+  if (ev.receipt.includes("capped by budget")) return `${who} pays the price shown on the page. The budget caps it.`;
+  return { read_file: `${who} opens your résumé.`, write_draft: `${who} drafts a cover letter.`, submit_application: `${who} sends your application, as you asked.`,
+           send_email: `${who} emails you a short note.`, pay: `${who} pays for the ticket.` }[ev.tool] || ev.receipt;
+}
+const verb = (ev) => ({ send_email: `email ${ev.args.to}`, pay: `pay ${ev.args.amount} CAD to ${ev.args.merchant}`,
+  submit_application: `send your application to ${ev.args.posting_id}`, write_draft: "rewrite your cover letter" })[ev.tool] || "act";
 
 const LABEL = { note: "mandate", read: "read", action: "action", blocked: "blocked", ask: "held", approved: "allowed", denied: "denied", delegate: "delegate" };
 function renderLog() {
