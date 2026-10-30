@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+glass_mcp_flight.json
+*.egg-info/

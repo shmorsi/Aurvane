@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "glass-agents"
+version = "0.1.0"
+description = "Every agent action: signed, bounded, visible. A trust layer for autonomous AI agents."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Sherif Morsi" }]
+license = { text = "MIT" }
+dependencies = ["cryptography>=42"]
+
+[project.optional-dependencies]
+mcp = ["mcp>=2"]
+dev = ["pytest>=8"]
+video = ["playwright>=1.45"]
+
+[tool.setuptools]
+packages = ["glass"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
