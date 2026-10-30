@@ -1,0 +1,95 @@
+# Learn Glass in 3 days
+
+Read one file at a time, in this order. Each file opens with a docstring that explains its idea
+in plain English; read that first, then the code. After each file, do the exercise.
+
+## Day 1: who an agent is, and what it may do
+
+**`glass/identity.py`** (morning)
+- A `Principal` is a human with an Ed25519 signing key.
+- A `Passport` binds an agent to the human who sent it. A `Mandate` lists what that agent may
+  do: tools, budget, payees, recipients, targets, expiry. Both are signed.
+- `canonical()` turns a dict into deterministic bytes, so one signature covers exactly one
+  meaning. Without it, the same mandate could serialize two ways and verification would flake.
+- Exercise: issue a mandate, change `spend_limit` with `dataclasses.replace`, call `is_valid()`.
+  Why does it fail? (The signature covers the old payload.)
+
+**`glass/guard.py`** (afternoon)
+- Four rules in order: identity, scope, bounds, provenance. First failure decides.
+- `Provenance.label()` answers: could this value have come from the human, or only from the
+  untrusted page? `_contains()` matches whole tokens, so "45" is not found inside "450".
+- The "bounded" case: untrusted text chose only the *amount*, at a payee the human trusts. Glass
+  allows it, because the budget already caps the loss. That is a deliberate trade-off.
+- Exercise: run `pytest -k provenance -v` and read those four tests.
+
+## Day 2: what happened, and where
+
+**`glass/recorder.py`** (morning)
+- Every event stores the hash of the previous event. Edit any past event and `verify()` fails.
+- `trust_score()`: 70% weight on attacks contained, 30% on budget not lost. Know the formula.
+- Exercise: log three events, edit the second, call `verify()`.
+
+**`glass/world.py`** (afternoon)
+- `TOOLS` marks each tool read-only or privileged, and names its control arguments.
+- `UNTRUSTED_SOURCES`: the output of these tools came from strangers.
+- Exercise: add a `book_flight` tool with `payee_arg` and `amount_arg`. Nothing in the guard
+  changes. Why? (The guard only reads `ToolSpec`, so new tools get protection for free.)
+
+## Day 3: the loop and the evidence
+
+**`glass/agent.py`** (morning)
+- `Checkpoint.attempt()` is Glass in one function: check, then run or refuse, then record.
+- `WorstCaseAgent` obeys every injection it reads. It tests the guard, not a model.
+- `LLMAgent` speaks to Claude, Grok, Ollama or any OpenAI-compatible API through one interface.
+- Exercise: with an API key, run one task with `LLMAgent` and read its flight log.
+
+**`glass/bench.py`** (afternoon)
+- 60 paired tasks, six attacks, with and without Glass. `score()` decides "landed" by exact match
+  of tool and arguments.
+- Exercise: `python -m glass.bench`. Then delete rule 4 from `guard.py`, rerun, and explain which
+  numbers changed. (The 4 held exfiltration attempts in purchase tasks now land.)
+
+**Then:** `glass/mcp_server.py` (40 lines) and `ui/template.html` (the replay).
+
+## 10 interview questions
+
+1. **What problem does Glass solve?**
+   Agents act on text they read, and anyone can write that text. Glass lets an agent read anything
+   while making sure untrusted text can't choose where money or data goes.
+
+2. **Why sign mandates instead of just putting limits in the prompt?**
+   A prompt is text, and text can be overridden by other text. A signed mandate is checked in code;
+   an injected "your budget is now 5,000" changes nothing because the signature would break.
+
+3. **Why does provenance only matter after the agent reads untrusted text?**
+   Before that, everything in the agent's context came from the human. Taint starts at the first
+   untrusted read; from then on, any destination could have been planted.
+
+4. **Why allow an untrusted amount at a trusted payee?**
+   The payee is trusted and the signed budget caps the loss. Blocking it would also block normal
+   purchases, where the price always comes from the store page. I show it as a residual risk.
+
+5. **What does Glass not protect?**
+   Content. A cover letter can still be rewritten. That needs a different tool: review, or a
+   second model checking text against the human's intent.
+
+6. **How would a real model change the results?**
+   A real model follows some injections, not all, so "without Glass" numbers drop. The "with
+   Glass" side should stay at zero for the four blocked attack types, since the guard doesn't
+   depend on the model. That is hypothesis H2 in `bench/PROTOCOL.md`.
+
+7. **What's the weakest part of the design?**
+   String-based provenance. If a model transforms a planted value, matching can miss it. Hard
+   bounds (rule 3) still hold, which is why both layers exist.
+
+8. **Why a hash chain in the recorder?**
+   So the log is tamper-evident: an auditor can check that nothing was edited or removed.
+
+9. **How does this fit MCP?**
+   `mcp_server.py` exposes the guarded tools over MCP, so any MCP client gets the checkpoint
+   without changing its model or prompts.
+
+10. **How would this become a company?**
+    Start narrow: spending controls for agents at fintechs and banks, where audit trails are
+    required anyway. Grow toward a network where merchants and other agents verify a mandate before
+    accepting a request, the way card terminals verify a card.
