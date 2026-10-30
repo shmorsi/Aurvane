@@ -86,3 +86,19 @@ they were made. Newest at the bottom.
 23. **A denied action draws no light.** The first cut of the film showed the light reaching the
     stranger on the "You denied" event, which reads as if it ran. Answers to held actions now
     move nothing on the canvas.
+24. **Which Claude model to run first.** The harness supports any model in `PRICES`. A rough
+    estimate for the full benchmark (120 runs, about 6 calls each, prompts cached) is a few cents
+    on Haiku 5.5, a few dollars on Sonnet 5.5, and likely more than 5 USD on Opus 5.5 once its
+    thinking tokens are billed as output. These are estimates, not measurements. A run the cap
+    stops is reported, not dropped, but a half-finished run cannot test H3, so the README lists
+    Haiku first and Sonnet second. Opus remains possible with `--model claude-opus-5-5`.
+25. **Portfolio.** `glass/index.html` is now an 8-line redirect (meta refresh, `location.replace`
+    that keeps the `#hash`, a canonical link, `noindex`). The site check enforces the redirect,
+    Aurvane's first place, figures equal to the copied summary (now including money lost), and
+    that no other page, script, data file or the README uses the old name; the check script
+    itself mentions it only to test the redirect.
+26. **Portfolio heading size.** "AURVANE" at the shared 120 px with 0.16em tracking overflowed the
+    copy column at 1440 px (the old five-letter name fit). A rule scoped to this one feature
+    lowers it; widths 320 to 1920 now have no horizontal scroll.
+27. **New share image** (`aurvane/media/og-aurvane.png`, 1200x630): the mark, the name, the
+    tagline and the mission line, rendered with Playwright. No figures on it, so it can't go stale.

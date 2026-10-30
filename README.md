@@ -110,13 +110,14 @@ Claude Desktop, Claude Code or any MCP client gets the same checkpoint. The demo
 
 ```bash
 pip install -e ".[dev,mcp]"
-pytest -q                                     # 39 tests: rules, forgery, delegation, approvals, cap, JS parity
+pytest -q                                     # 40 tests: rules, forgery, delegation, approvals, cap, JS parity, README numbers
 python -m aurvane.bench                       # offline, worst-case agent, about 0.5 s
 python ui/build.py && open ui/index.html      # the demo page: replay and try-it box
 python ui/record.py                           # the film (Playwright + ffmpeg)
 
 # Real models, same harness (protocol fixed in bench/PROTOCOL.md). Hard cap: 5 USD across all runs.
-ANTHROPIC_API_KEY=...  python -m aurvane.bench --provider anthropic --model claude-opus-5-5
+ANTHROPIC_API_KEY=...  python -m aurvane.bench --provider anthropic --model claude-haiku-5-5   # first: cents
+ANTHROPIC_API_KEY=...  python -m aurvane.bench --provider anthropic --model claude-sonnet-5-5  # then, if budget is left
 XAI_API_KEY=...        python -m aurvane.bench --provider xai --model <grok-model> --price <in>,<out>
                        python -m aurvane.bench --provider ollama --model qwen2.5:7b
 

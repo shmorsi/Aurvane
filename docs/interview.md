@@ -33,7 +33,7 @@ quote it, and say "not run yet" when asked about real models.
 >
 > **Evidence.** A 60-task benchmark, fixed before any real-model run with written hypotheses.
 > With a worst-case agent, 30 of 30 attacks land without Aurvane and 7 of 30 with it, money lost
-> drops from 12,135 to 135 CAD, and all 30 clean tasks still complete with zero false alarms. 39
+> drops from 12,135 to 135 CAD, and all 30 clean tasks still complete with zero false alarms. 40
 > tests, CI on every push, and the guard is ported to JavaScript for the live demo, with a test
 > that proves both versions make the same decision on every action in all 60 tasks.
 >
@@ -134,7 +134,7 @@ the evidence is in this repo.
 
 | What the role usually asks for | Where Aurvane shows it |
 |---|---|
-| Python, testing, CI | `aurvane/`, 39 tests in `tests/`, GitHub Actions on every push |
+| Python, testing, CI | `aurvane/`, 40 tests in `tests/`, GitHub Actions on every push |
 | Building on LLM APIs and tool use | `aurvane/models.py`: Claude, Grok and Ollama behind one interface, tool calls, prompt caching, cost tracking |
 | Agent systems and MCP | `aurvane/agent.py` loop, `aurvane/mcp_server.py` |
 | Evaluation design and statistics | `bench/PROTOCOL.md` written before results, paired tasks, exact McNemar in `aurvane/stats.py` |

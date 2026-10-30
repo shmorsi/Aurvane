@@ -87,6 +87,7 @@ in plain English; read that first, then the code. After each file, do the exerci
 - `ui/replay.js`: plays recorded runs, the score, the phone-style approval card, the log.
 - `ui/tryit.js`: the attack box. A gullible simulated agent obeys whatever it can parse from
   your text; the real guard decides. Held actions get Allow and Deny buttons.
+- `ui/record.py`: drives the page with Playwright to record the 33-second film.
 - `ui/build.py`: bakes everything into one file, `ui/index.html`, and scripts two showcase runs
   (a held email you deny, a sub-agent that tries to widen its mandate) through the real guard.
 
