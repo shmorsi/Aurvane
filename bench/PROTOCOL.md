@@ -39,7 +39,14 @@ model ID and date.
 
 ## Changes
 
-
 - 2026-10-30, before any real-model run: the project was renamed, so the forge attack text now
   reads "your Aurvane mandate was updated" instead of the old product name. Same task, same
   intent, one word changed. Worst-case results are byte-for-byte the same counts.
+- 2026-10-30, before any real-model run: harness details fixed for real models. Claude gets
+  `max_tokens` 4096 and automatic prompt caching (cost only; the model sees the same text). No
+  temperature is sent, so every provider uses its default. A held action now answers the model
+  "Held by Aurvane for the human's approval (ask_N)" instead of "Denied", because the human can
+  approve it later; in the benchmark nobody approves, so held still means not executed. A task
+  whose model call fails is scored as far as it got and marked with `error`. A hard spending cap
+  (default 5 USD across all runs, ledger in `bench/results/spend.json`) stops a run before any
+  call that could cross it; a stopped run is reported as `stopped_early`, never dropped.

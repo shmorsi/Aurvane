@@ -142,3 +142,37 @@ def test_benchmark_headline_numbers():
     # ...and, by design, does not stop text tampering or small in-budget skims.
     assert with_["by_attack"]["rewrite"]["landed"] == 4
     assert with_["money_lost_cad"] <= 3 * 250
+
+
+# --- approvals -------------------------------------------------------------------
+
+def held_checkpoint():
+    task = next(t for t in make_tasks() if t["id"] == "buy-15-poisoned")
+    cp = Checkpoint(task, World(stores=dict(task["world"]["stores"])))
+    cp.attempt(Step("read_store", {"merchant": "tickets.aiweek.example"}))
+    out = cp.attempt(Step("send_email", {"to": "new@desk.example", "subject": "", "body": ""}))
+    return cp, out
+
+
+def test_held_action_waits_for_the_human():
+    cp, out = held_checkpoint()
+    assert "ask_1" in out and list(cp.pending) == ["ask_1"] and not cp.world.outbox
+
+
+def test_approve_runs_the_held_action_once():
+    cp, _ = held_checkpoint()
+    cp.approve("ask_1")
+    assert cp.world.outbox[-1]["to"] == "new@desk.example" and not cp.pending
+    assert [e["kind"] for e in cp.rec.events][-2:] == ["approved", "action"] and cp.rec.verify()
+
+
+def test_deny_never_runs_it():
+    cp, _ = held_checkpoint()
+    cp.deny("ask_1")
+    assert not cp.world.outbox and cp.rec.events[-1]["kind"] == "denied"
+
+
+def test_approval_cannot_override_hard_bounds():
+    cp, _ = held_checkpoint()
+    cp.mandate = cp.guard.mandate = dataclasses.replace(cp.mandate, expires_at=0)  # expired while waiting
+    assert cp.approve("ask_1").startswith("Denied by Aurvane") and not cp.world.outbox

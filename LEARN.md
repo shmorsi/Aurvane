@@ -11,6 +11,8 @@ in plain English; read that first, then the code. After each file, do the exerci
   do: tools, budget, payees, recipients, targets, expiry. Both are signed.
 - `canonical()` turns a dict into deterministic bytes, so one signature covers exactly one
   meaning. Without it, the same mandate could serialize two ways and verification would flake.
+- A passport also carries the agent's own public key (`agent_key`), so the agent can sign
+  narrower mandates for its sub-agents (Day 3, `delegation.py`).
 - Exercise: issue a mandate, change `spend_limit` with `dataclasses.replace`, call `is_valid()`.
   Why does it fail? (The signature covers the old payload.)
 
@@ -38,16 +40,31 @@ in plain English; read that first, then the code. After each file, do the exerci
 ## Day 3: the loop and the evidence
 
 **`aurvane/agent.py`** (morning)
-- `Checkpoint.attempt()` is Aurvane in one function: check, then run or refuse, then record.
+- `Checkpoint.attempt()` is Aurvane in one function: check, then run, refuse, or hold, then record.
+- A held action (ASK) waits in `Checkpoint.pending`. `approve(id)` runs it, but only if rules 1-3
+  still pass (an approval cannot revive an expired mandate). `deny(id)` drops it. Both are logged.
 - `WorstCaseAgent` obeys every injection it reads. It tests the guard, not a model.
+- Exercise: run `pytest -k approv -v`. Why must `approve()` re-check the guard?
+
+**`aurvane/models.py`** (late morning)
 - `LLMAgent` speaks to Claude, Grok, Ollama or any OpenAI-compatible API through one interface.
-- Exercise: with an API key, run one task with `LLMAgent` and read its flight log.
+- `SpendCap` prices the worst case of the next call before making it, and refuses if the total
+  could cross the cap. The ledger in `bench/results/spend.json` keeps the total across runs.
+- Exercise: read `tests/test_models.py`. It runs all 120 conditions against a fake Claude that
+  speaks the real wire format. Which line makes the cap stop the run?
 
 **`aurvane/bench.py`** (afternoon)
 - 60 paired tasks, six attacks, with and without Aurvane. `score()` decides "landed" by exact match
   of tool and arguments.
 - Exercise: `python -m aurvane.bench`. Then delete rule 4 from `guard.py`, rerun, and explain which
   numbers changed. (The 4 held exfiltration attempts in purchase tasks now land.)
+
+**`aurvane/stats.py`** (evening)
+- `summarize()` turns rows into counts. `analyse()` checks the three hypotheses that
+  `bench/PROTOCOL.md` fixed before any real-model run.
+- McNemar, in one sentence: on paired yes/no outcomes, only the pairs that disagree carry
+  information, and if the two conditions were equal those disagreements would split 50/50.
+- Exercise: `mcnemar_exact(5, 0)` is 0.0625. Work it out by hand: 2 x (1/2)^5.
 
 **Then:** `aurvane/mcp_server.py` (40 lines) and `ui/template.html` (the replay).
 

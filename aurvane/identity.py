@@ -72,6 +72,7 @@ class Passport:
     delegator: str
     delegator_key: str
     issued_at: float
+    agent_key: str = ""   # the agent's own public key, so it can sign mandates for sub-agents
     signature: str = ""
 
     def payload(self) -> dict:
@@ -83,7 +84,7 @@ class Passport:
         return verify(self.delegator_key, self.payload(), self.signature)
 
 
-def issue_passport(principal: Principal, name: str, role: str) -> Passport:
+def issue_passport(principal: Principal, name: str, role: str, agent_key: str = "") -> Passport:
     unsigned = Passport(
         agent_id=f"agt_{uuid.uuid4().hex[:10]}",
         name=name,
@@ -91,6 +92,7 @@ def issue_passport(principal: Principal, name: str, role: str) -> Passport:
         delegator=principal.name,
         delegator_key=principal.public_key,
         issued_at=time.time(),
+        agent_key=agent_key,
     )
     return Passport(**{**unsigned.payload(), "signature": principal.sign(unsigned.payload())})
 

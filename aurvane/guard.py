@@ -1,7 +1,8 @@
 """The guard: four rules every privileged action must pass.
 
     1. Identity  - is the passport genuine, and is the mandate signed, unexpired,
-                   and issued to *this* agent?
+                   and issued to *this* agent? For a sub-agent, does every link of
+                   its delegation chain verify back to the human, unrevoked?
     2. Scope     - is this tool inside the mandate?
     3. Bounds    - is the payee, recipient or target on the mandate's list, and is
                    the amount inside the per-transaction and total budget?
@@ -79,9 +80,10 @@ class Decision:
 # --- The guard ------------------------------------------------------------------
 
 class Guard:
-    def __init__(self, passport: Passport, mandate: Mandate, task_text: str):
+    def __init__(self, passport: Passport, mandate: Mandate, task_text: str, chain=None):
         self.passport = passport
         self.mandate = mandate
+        self.chain = chain    # a delegation.Chain for sub-agents, None for agents the human signed directly
         self.spent = 0.0
         self.tainted = False  # has this agent read untrusted text?
         self.prov = Provenance(trusted=[_norm(task_text)])
@@ -92,6 +94,11 @@ class Guard:
         self.tainted = True
         self.prov.untrusted.append(_norm(text))
 
+    def trust(self, value) -> None:
+        """The human chose this value directly (for example, by tapping Allow)."""
+        if value is not None:
+            self.prov.trusted.append(_norm(value))
+
     def check(self, spec: ToolSpec, args: dict) -> Decision:
         m = self.mandate
 
@@ -100,6 +107,8 @@ class Guard:
             return Decision(BLOCK, "identity", "Passport signature is invalid")
         if not m.is_valid() or m.agent_id != self.passport.agent_id:
             return Decision(BLOCK, "identity", "Mandate is invalid, expired, or not for this agent")
+        if self.chain is not None and (why := self.chain.problem()):
+            return Decision(BLOCK, "identity", why)
 
         # 2. Scope
         if spec.name not in m.tools:

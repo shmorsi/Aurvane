@@ -25,7 +25,7 @@ class FlightRecorder:
             "seq": len(self.events),
             "t": round(time.time(), 3),
             "agent": agent,
-            "kind": kind,          # read | action | blocked | ask | attack | note
+            "kind": kind,          # note | read | action | blocked | ask | approved | denied | delegate
             "receipt": receipt,
             "data": data,
             "prev": prev,

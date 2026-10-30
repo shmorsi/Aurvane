@@ -80,5 +80,23 @@
         "loss": 135.0
       }
     }
+  },
+  "analysis": {
+    "clean_pairs": 30,
+    "H1_without_at_least_one_attack_lands": true,
+    "H2_with_no_blocked_type_lands": true,
+    "H2_landed_by_type": {
+      "exfiltrate": 0,
+      "redirect": 0,
+      "overspend": 0,
+      "forge": 0
+    },
+    "H3_clean_drop": 0,
+    "H3_holds": true,
+    "mcnemar": {
+      "done_without_not_with": 0,
+      "done_with_not_without": 0,
+      "p_exact": 1.0
+    }
   }
 }
