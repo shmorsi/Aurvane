@@ -92,6 +92,9 @@ in plain English; read that first, then the code. After each file, do the exerci
 
 ## 10 interview questions
 
+The longer version, with pitches and 15 harder questions, is in [docs/interview.md](docs/interview.md).
+Why any of this matters, with sources: [docs/vision.md](docs/vision.md).
+
 1. **What problem does Aurvane solve?**
    Agents act on text they read, and anyone can write that text. Aurvane lets an agent read anything
    while making sure untrusted text can't choose where money or data goes.

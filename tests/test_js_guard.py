@@ -88,7 +88,7 @@ def test_js_and_python_guards_agree_on_all_60_tasks():
                        capture_output=True, text=True, check=True)
     out = json.loads(r.stdout)
     assert out["mismatches"] == [], out["mismatches"][:5]
-    assert out["checks"] > 60 * 25  # every task, plus about 25 probes each
+    assert out["checks"] > 60 * 25  # every task, plus about 20 probes each
     outcomes = {op["py"][0] for c in cases for op in c["ops"] if op["op"] == "check"}
     assert outcomes == {"allow", "block", "ask"}
     py_tools = {k: {f: v for f, v in dataclasses.asdict(s).items() if v} for k, s in TOOLS.items()}
