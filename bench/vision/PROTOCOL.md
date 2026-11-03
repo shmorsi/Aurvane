@@ -75,4 +75,6 @@ a guess.
 
 ## Changes
 
-None yet.
+- 2026-11-03, before any real-model run: the manifest gained a `lines` field (one rectangle per
+  line of the hidden sentence), used only to draw the close-up on the demo page. The pictures,
+  their hashes and the scoring boxes are byte-for-byte the same.

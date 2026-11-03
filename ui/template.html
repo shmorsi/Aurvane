@@ -38,7 +38,7 @@
 <div class="wrap">
   <header class="top">
     <a class="mark" href="https://shmorsi.github.io/" aria-label="Sherif Morsi, back to the portfolio">/*__MARK__*/Sherif Morsi <span class="say">/ Aurvane</span></a>
-    <nav aria-label="Sections"><a href="#room">Replay</a><a href="#try">Try it</a><a href="#results">Results</a><a href="#how">How it works</a><a href="https://github.com/shmorsi/aurvane">GitHub</a></nav>
+    <nav aria-label="Sections"><a href="#room">Replay</a><a href="#try">Try it</a><a href="#pictures">Pictures</a><a href="#results">Results</a><a href="#how">How it works</a><a href="https://github.com/shmorsi/aurvane">GitHub</a></nav>
   </header>
 
   <section class="hero">
@@ -111,6 +111,45 @@
       <div class="steps" id="steps" aria-live="polite"></div>
     </div>
   </section>
+
+  <section id="pictures" aria-labelledby="picH">
+    <div class="sec-h"><h2 id="picH">It reads pictures too</h2><p>Browsing agents look at screenshots, so the order can be drawn into the pixels where no text filter will ever see it. Aurvane never reads the picture. It doesn't need to: a destination only the picture could have supplied is not trusted.</p></div>
+    <div class="vis">
+      <div class="vis-main">
+        <div class="vis-tabs" role="group" aria-label="How the hidden sentence is drawn" id="visTabs"></div>
+        <figure class="shot" id="visShot">
+          <img id="visImg" alt="" width="1000" height="850">
+          <div class="vbox" id="visBox" hidden><span id="visBoxLab"></span></div>
+        </figure>
+        <div class="vis-ctl">
+          <button type="button" class="vtoggle" id="visReveal" aria-pressed="false">Reveal hidden text</button>
+          <button type="button" class="vtoggle" id="visEvidence" aria-pressed="true">Show evidence box</button>
+          <span class="vis-blurb" id="visBlurb"></span>
+        </div>
+      </div>
+      <aside class="vis-side" aria-live="polite">
+        <div class="vside-h">The task</div>
+        <p class="vreq" id="visReq"></p>
+        <div class="vside-h">Without Aurvane</div>
+        <div class="vout bad" id="visOff"></div>
+        <div class="vside-h">With Aurvane</div>
+        <div class="vcard" id="visOn"></div>
+        <div class="vside-h">Evidence</div>
+        <div class="vcrop" id="visCrop" role="img" tabindex="0"><div class="vcrop-in" id="visCropIn"></div></div>
+        <span class="vsrc" id="visCropHint" hidden>Scroll sideways to read the whole line.</span>
+        <p class="vquote" id="visQuote"></p>
+        <p class="vsrc" id="visSrc"></p>
+      </aside>
+    </div>
+    <div class="results" id="visStats"></div>
+    <div class="ctable" id="visCarriers"></div>
+    <p class="note" id="visReal"></p>
+  </section>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="levels" color-interpolation-filters="sRGB"><feComponentTransfer>
+      <feFuncR type="linear" slope="14" intercept="-13"/><feFuncG type="linear" slope="14" intercept="-13"/><feFuncB type="linear" slope="14" intercept="-13"/>
+    </feComponentTransfer></filter>
+  </svg>
 
   <section aria-labelledby="recH">
     <div class="sec-h"><h2 id="recH">Flight recorder</h2><p>Every attempt gets a plain-English receipt. Each entry carries the hash of the one before it, so editing history breaks the chain.</p></div>

@@ -126,6 +126,59 @@ def real_models():
     return out
 
 
+VISION_SHOWCASE = [  # one store page per carrier; every outcome below comes from a committed trace
+    ("v-buy-15-poisoned", "Faint text", "Near-white words on a white page. A person sees a blank band."),
+    ("v-buy-19-poisoned", "Fine print", "Seven-pixel grey text in the footer's legal lines."),
+    ("v-buy-23-poisoned", "Official-looking notice", "A tidy box styled like the site, with a forged budget."),
+]
+
+
+def vision_showcase():
+    """The 'It reads pictures too' section: pictures, guard decisions, and the evidence box.
+
+    The evidence box comes from a measured real-model run if one is committed
+    (bench/results/<provider>_<model>_evidence_rows.json); otherwise from the renderer's
+    ground truth, and the page says which.
+    """
+    import base64
+    manifest = json.loads((ROOT / "bench" / "vision" / "manifest.json").read_text())
+    on = json.loads((RES / "worst-case_vision_with_aurvane_traces.json").read_text())
+    off = json.loads((RES / "worst-case_vision_without_aurvane_traces.json").read_text())
+    measured = {}
+    for f in sorted(RES.glob("*_evidence_summary.json")):
+        s = json.loads(f.read_text())
+        if s.get("provider") != "ground-truth":
+            rows = json.loads(f.with_name(f.name.replace("_summary", "_rows")).read_text())
+            measured = {"model": s["model"], "summary": {k: s[k] for k in (
+                "pointed", "poisoned_pages", "pointed_wilson95", "false_findings", "clean_pages", "quote_ok", "mean_iou")},
+                "rows": {r["id"]: r for r in rows}}
+    pages = []
+    for vid, title, blurb in VISION_SHOWCASE:
+        m = manifest[vid]
+        attack_on = [e for e in on[vid]["events"] if e["seq"] in on[vid]["attack_seqs"]][0]
+        attack_off = [e for e in off[vid]["events"] if e["seq"] in off[vid]["attack_seqs"]][0]
+        img = base64.b64encode((ROOT / "bench" / "vision" / "pages" / f"{vid}.png").read_bytes()).decode()
+        row = measured.get("rows", {}).get(vid)
+        evidence = ({"by": measured["model"], "box": row.get("box"), "quote": row.get("quote"), "pointed": row.get("pointed")}
+                    if row else {"by": None, "box": m["box"], "quote": m["hidden"], "pointed": True})
+        pages.append({"id": vid, "title": title, "blurb": blurb, "carrier": m["carrier"], "size": m["size"],
+                      "img": "data:image/png;base64," + img, "hidden": m["hidden"], "truth": m["box"], "lines": m.get("lines"),
+                      "request": on[vid]["request"], "mandate": slim(on[vid])["mandate"],
+                      "on": {"kind": attack_on["kind"], "rule": attack_on["data"].get("rule"), "receipt": attack_on["receipt"]},
+                      "off": {"kind": attack_off["kind"], "receipt": attack_off["receipt"]}, "evidence": evidence})
+    real = []
+    for f in sorted(RES.glob("*_vision_summary.json")):
+        s = json.loads(f.read_text())
+        if s.get("provider") not in ("worst-case", None) and "with_aurvane" in s:
+            real.append({"model": s["model"], "n": s["with_aurvane"]["poisoned_tasks"],
+                         "with": s["with_aurvane"]["attacks_landed"], "without": s["without_aurvane"]["attacks_landed"],
+                         "by_carrier_without": s["without_aurvane"].get("by_carrier"),
+                         "complete": s["with_aurvane"].get("complete", True)})
+    wc = json.loads((RES / "worst-case_vision_summary.json").read_text())
+    return {"pages": pages, "summary": {k: wc[k] for k in ("with_aurvane", "without_aurvane")},
+            "real": real, "evidence": measured.get("summary") and {"model": measured["model"], **measured["summary"]}}
+
+
 def main():
     on = json.loads((RES / "worst-case_with_aurvane_traces.json").read_text())
     off = json.loads((RES / "worst-case_without_aurvane_traces.json").read_text())
@@ -139,10 +192,10 @@ def main():
                      "on": slim(pair["on"]), "off": slim(pair["off"])})
     data = {"runs": runs, "summary": json.loads((RES / "worst-case_summary.json").read_text()),
             "real": real_models(), "tryit": tryit(),
-            "redteam": json.loads((RES / "redteam_summary.json").read_text())}
+            "redteam": json.loads((RES / "redteam_summary.json").read_text()), "vision": vision_showcase()}
     mark = (UI / "mark.svg").read_text().strip()
     favicon = urllib.parse.quote(mark.replace("currentColor", "#e8eef5"))
-    js = "\n".join((UI / f).read_text() for f in ("guard.js", "room.js", "bots.js", "replay.js", "tryit.js"))
+    js = "\n".join((UI / f).read_text() for f in ("guard.js", "room.js", "bots.js", "replay.js", "tryit.js", "vision.js"))
     out = (UI / "template.html").read_text()
     for key, value in (("/*__CSS__*/", (UI / "style.css").read_text()), ("/*__FAVICON__*/", favicon),
                        ("/*__MARK__*/", mark), ("/*__JS__*/", js)):

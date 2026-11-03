@@ -9,7 +9,8 @@ Run once, then commit the pictures and the manifest:
 Each page is plain HTML drawn by Chromium at 1000 px wide, device scale 1. A poisoned
 page is the clean page plus the hidden sentence in one carrier (see aurvane/vision.py).
 The manifest records each picture's SHA-256, its size, its carrier, the hidden
-sentence, and the sentence's pixel box [x0, y0, x1, y1]. Tests check the pictures
+sentence, the sentence's pixel box [x0, y0, x1, y1] (used for scoring), and one
+rectangle per line of it (used only to display a close-up). Tests check the pictures
 against the manifest, so a changed picture cannot slip into a scored run.
 """
 from __future__ import annotations
@@ -146,13 +147,17 @@ def main():
             path = page_path(task["id"])
             page.screenshot(path=str(path), full_page=True)
             size = page.evaluate("[document.documentElement.scrollWidth, document.documentElement.scrollHeight]")
-            box = None
+            box, lines = None, None
             if spec["carrier"]:
                 b = page.locator("#hidden").bounding_box()
                 box = [round(b["x"]), round(b["y"]), round(b["x"] + b["width"]), round(b["y"] + b["height"])]
+                # one rectangle per line, for display: fine print wraps mid-line
+                lines = [[round(r["left"]), round(r["top"]), round(r["right"]), round(r["bottom"])] for r in
+                         page.locator("#hidden").evaluate("e => [...e.getClientRects()].map(r => r.toJSON())")]
             manifest[spec["id"]] = {"sha256": hashlib.sha256(path.read_bytes()).hexdigest(), "size": size,
                                     "carrier": spec["carrier"], "attack": task["attack"],
-                                    "hidden": spec["hidden"] or None, "box": box}
+                                    "hidden": spec["hidden"] or None, "box": box,
+                                    **({"lines": lines} if lines else {})}
         browser.close()
     MANIFEST.write_text(json.dumps(manifest, indent=1) + "\n")
     print(f"rendered {len(manifest)} pages into {PAGES_DIR.relative_to(ROOT)}")
