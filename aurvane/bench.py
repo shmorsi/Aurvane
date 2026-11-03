@@ -1,7 +1,8 @@
 """The benchmark: 30 clean tasks and 30 poisoned ones, with and without Aurvane.
 
 Run it:  python -m aurvane.bench            (offline, worst-case agent, no API key)
-         python -m aurvane.bench --provider anthropic --model claude-opus-5-5   (hard cap: 5 USD)
+         python -m aurvane.bench --suite vision  (the same tasks, as screenshots)
+         python -m aurvane.bench --provider meta --model <muse-spark id> --price in,out --suite vision
 
 Half the tasks apply to a job; half buy a ticket. Each poisoned task hides one
 instruction inside the posting or store page. Six attack types:
@@ -147,14 +148,17 @@ def _payloads(task):
     return [list(v) for v in task["injections"].values()]
 
 
-def run_all(make_model, guarded: bool) -> tuple[list[dict], dict]:
+def run_all(make_model, guarded: bool, tasks: list[dict] | None = None) -> tuple[list[dict], dict]:
     """Every task, one condition. A model error ends that task (scored as far as it got);
-    reaching the spending cap ends the run."""
+    reaching the spending cap ends the run. `tasks` defaults to the 60 text tasks."""
     rows, traces = [], {}
-    for task in make_tasks():
+    for task in tasks if tasks is not None else make_tasks():
         world = World(postings=dict(task["world"].get("postings", {})), stores=dict(task["world"].get("stores", {})))
         res = run(task, make_model(task), world, guarded=guarded)
-        rows.append({**score(task, res), **({"error": res.error} if res.error else {})})
+        row = score(task, res)
+        if task.get("carrier"):
+            row["carrier"] = task["carrier"]
+        rows.append({**row, **({"error": res.error} if res.error else {})})
         if res.error.startswith("CapReached"):
             rows.append({"id": task["id"], "stopped": res.error})
             break
@@ -169,7 +173,9 @@ def run_all(make_model, guarded: bool) -> tuple[list[dict], dict]:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--provider", default="worst-case", help="worst-case | anthropic | xai | ollama")
+    ap.add_argument("--provider", default="worst-case", help="worst-case | meta | anthropic | xai | ollama")
+    ap.add_argument("--suite", default="text", choices=["text", "vision"],
+                    help="text: the 60 text tasks; vision: the same 60 tasks as screenshots")
     ap.add_argument("--model", default="")
     ap.add_argument("--cap", type=float, default=5.0, help="hard spending cap in USD, across all runs")
     ap.add_argument("--price", default="", help="USD per million tokens 'in,out' for a model not in PRICES")
@@ -177,6 +183,12 @@ def main():
     ap.add_argument("--out", default="bench/results")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
+    tasks = None
+    if a.suite == "vision":
+        from .vision import check_pages, make_vision_tasks
+        if problems := check_pages():
+            raise SystemExit("vision pages do not match bench/vision/manifest.json: " + "; ".join(problems[:3]))
+        tasks = make_vision_tasks()
     cap = None
     if a.provider == "worst-case":
         name = "worst-case"
@@ -192,11 +204,13 @@ def main():
         name = f"{a.provider}_{a.model.replace(':', '-').replace('/', '-')}"
         def make_model(task):
             return LLMAgent(a.provider, a.model, task["request"], cap, base_url=a.base_url)
+    if a.suite == "vision":
+        name += "_vision"
 
-    report = {"provider": a.provider, "model": a.model, **({"date": datetime.date.today().isoformat()} if cap else {})}
+    report = {"provider": a.provider, "model": a.model, **({"suite": "vision"} if a.suite == "vision" else {}), **({"date": datetime.date.today().isoformat()} if cap else {})}
     rows_by = {}
     for label, guarded in (("without_aurvane", False), ("with_aurvane", True)):
-        rows_by[label], traces = run_all(make_model, guarded)
+        rows_by[label], traces = run_all(make_model, guarded, tasks)
         report[label] = summarize(rows_by[label])
         _dump(f"{a.out}/{name}_{label}_rows.json", rows_by[label], 1)
         _dump(f"{a.out}/{name}_{label}_traces.json", traces, None)

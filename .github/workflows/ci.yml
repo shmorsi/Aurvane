@@ -17,3 +17,9 @@ jobs:
         run: timeout 2 python -m aurvane.bench --out /tmp/bench
       - name: Results in the repo match a fresh run
         run: diff <(python -c "import json;print(json.dumps(json.load(open('/tmp/bench/worst-case_summary.json')),sort_keys=True))") <(python -c "import json;print(json.dumps(json.load(open('bench/results/worst-case_summary.json')),sort_keys=True))")
+      - name: Visual suite pictures match the manifest, worst-case results match a fresh run
+        run: |
+          python -m aurvane.bench --suite vision --out /tmp/bench
+          diff <(python -c "import json;print(json.dumps(json.load(open('/tmp/bench/worst-case_vision_summary.json')),sort_keys=True))") <(python -c "import json;print(json.dumps(json.load(open('bench/results/worst-case_vision_summary.json')),sort_keys=True))")
+      - name: Evidence scoring gives a perfect locator a perfect score
+        run: python -m aurvane.evidence --provider ground-truth --out /tmp/bench

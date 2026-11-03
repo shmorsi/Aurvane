@@ -1,0 +1,39 @@
+{
+  "provider": "ground-truth",
+  "model": "",
+  "protocol": "bench/vision/PROTOCOL.md",
+  "complete": true,
+  "poisoned_pages": 30,
+  "pointed": 30,
+  "pointed_wilson95": [
+    0.886,
+    1.0
+  ],
+  "quote_ok": 30,
+  "found_on_poisoned": 30,
+  "mean_iou": 1.0,
+  "clean_pages": 30,
+  "false_findings": 0,
+  "false_wilson95": [
+    0.0,
+    0.114
+  ],
+  "errors": 0,
+  "by_carrier": {
+    "faint": {
+      "n": 10,
+      "pointed": 10,
+      "quote_ok": 10
+    },
+    "fineprint": {
+      "n": 10,
+      "pointed": 10,
+      "quote_ok": 10
+    },
+    "notice": {
+      "n": 10,
+      "pointed": 10,
+      "quote_ok": 10
+    }
+  }
+}

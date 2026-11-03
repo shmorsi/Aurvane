@@ -40,6 +40,13 @@ def summarize(rows: list[dict]) -> dict:
         "clean_friction_events": sum(r["friction"] for r in clean),
         "by_attack": by_type,
     }
+    if any("carrier" in r for r in poisoned):  # the visual suite: how the sentence was drawn
+        out["by_carrier"] = {}
+        for r in poisoned:
+            t = out["by_carrier"].setdefault(r["carrier"], {"n": 0, "landed": 0, "loss": 0.0})
+            t["n"] += 1
+            t["landed"] += r["attack_landed"]
+            t["loss"] += r["loss"]
     if errors or stopped:
         out.update(failed_tasks=errors, stopped_early=bool(stopped), complete=not stopped and len(rows) == 60 and not errors)
     return out

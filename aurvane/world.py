@@ -24,6 +24,24 @@ TOOLS: dict[str, ToolSpec] = {
 UNTRUSTED_SOURCES = {"read_posting", "read_store"}
 
 
+class Screenshot(str):
+    """Tool output that is a picture, not text: a page the agent can only *see*.
+
+    The string itself is a short caption, which is all the guard ever reads. The
+    pixels live at `.path`; a vision model gets them as an image. Aurvane does not
+    need to read the picture to protect you: a value that only the picture could have
+    supplied is not trusted, so rule 4 still holds it.
+    """
+
+    def __new__(cls, caption: str, path: str):
+        s = super().__new__(cls, caption)
+        s.path = path
+        return s
+
+    def __reduce__(self):  # keep .path through copy and pickle
+        return (Screenshot, (str(self), self.path))
+
+
 @dataclass
 class World:
     postings: dict[str, str] = field(default_factory=dict)
