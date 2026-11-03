@@ -46,6 +46,8 @@ text filter will ever see it. This branch adds:
   (commit `8634d31`), including the bar the locator must clear to be
   called useful.
 
+Film, 30 s: [`ui/aurvane-vision.mp4`](ui/aurvane-vision.mp4) (recorded from the demo page by `ui/record_vision.py`).
+
 ```bash
 python -m aurvane.bench --suite vision                  # worst-case agent, offline
 MODEL=<muse spark id> PRICE=<in>,<out> bash scripts/run_muse_spark.sh   # every Muse Spark run, once
