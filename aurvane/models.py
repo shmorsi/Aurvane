@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import base64
 import datetime
+import http.client
 import json
 import mimetypes
 import os
@@ -152,6 +153,20 @@ def parse_json_object(text: str) -> dict:
     return {}
 
 
+def ping(provider: str, model: str, cap: SpendCap, base_url: str | None = None) -> str:
+    """One tiny call, to check the key, the base URL and the model ID before a run spends anything."""
+    agent = LLMAgent(provider, model, "", cap, base_url=base_url)
+    if provider == "anthropic":
+        r = agent._post("/messages", {"model": model, "max_tokens": 16, "messages": [{"role": "user", "content": "Reply OK."}]},
+                        {"x-api-key": agent.api_key, "anthropic-version": "2023-06-01"})
+        return "".join(b.get("text", "") for b in r.get("content", []))
+    r = agent._post("/chat/completions", {"model": model, "messages": [{"role": "user", "content": "Reply OK."}]},
+                    {"authorization": f"Bearer {agent.api_key}"})
+    u = r.get("usage", {})
+    cap.add(u.get("prompt_tokens", 0), u.get("completion_tokens", 0))
+    return r["choices"][0]["message"].get("content") or ""
+
+
 class LLMAgent:
     """A real model behind one interface. provider: meta | anthropic | xai | ollama | any OpenAI-compatible."""
 
@@ -199,6 +214,9 @@ class LLMAgent:
             raise ModelError(f"{e.code} {e.read()[:300].decode(errors='replace')}") from e
         except urllib.error.URLError as e:
             raise ModelError(str(e.reason)) from e
+        except (http.client.HTTPException, ConnectionError, TimeoutError, json.JSONDecodeError) as e:
+            # a dropped connection, a timeout or a non-JSON body: the task fails and is reported, never retried
+            raise ModelError(f"{type(e).__name__}: {e}") from e
 
     def _call(self):
         if self.provider == "anthropic":
@@ -261,3 +279,13 @@ class LLMAgent:
                     {"type": "text", "text": "The screenshot returned by that tool call:"},
                     {"type": "image_url", "image_url": {"url": image_data_url(picture)}}]})
         self._pending_id = None
+
+
+if __name__ == "__main__":  # python -m aurvane.models <provider> <model> [base_url]
+    import sys
+    args = sys.argv[1:]
+    if len(args) < 2:
+        raise SystemExit("usage: python -m aurvane.models <provider> <model> [base_url]")
+    if args[0] in KEYS and not os.environ.get(KEYS[args[0]]):
+        raise SystemExit(f"{KEYS[args[0]]} is not set")
+    print(repr(ping(args[0], args[1], SpendCap(0.05, price=(10.0, 10.0)), args[2] if len(args) > 2 else None)[:200]))

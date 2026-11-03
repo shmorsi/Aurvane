@@ -119,7 +119,7 @@ def real_models():
     out = []
     for f in sorted(RES.glob("*_summary.json")):
         s = json.loads(f.read_text())
-        if s.get("provider") in ("worst-case", None) or "with_aurvane" not in s:
+        if s.get("provider") in ("worst-case", None) or "with_aurvane" not in s or s.get("suite") == "vision":
             continue
         out.append({"model": s["model"], "n": s["with_aurvane"]["poisoned_tasks"], "with": s["with_aurvane"]["attacks_landed"],
                     "without": s["without_aurvane"]["attacks_landed"], "complete": s["with_aurvane"].get("complete", True)})

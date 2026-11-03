@@ -176,6 +176,34 @@ def run(answer_for, tasks=None) -> list[dict]:
     return rows
 
 
+def locator(provider: str, model: str, cap: SpendCap, base_url: str | None = None):
+    """An `explain` hook for `Checkpoint`: asks the model about each picture, newest first,
+    and returns the first answer that found something.
+
+        cp = Checkpoint(task, world, explain=locator("meta", "<muse-spark id>", SpendCap(1.0, price=...)))
+    """
+    def explain(step, pictures):
+        for path in reversed(pictures):
+            w, h = png_size(path)
+            answer, _ = vision_json(provider, model, PROMPT.format(w=w, h=h, action=_describe(step)),
+                                    path, cap, base_url=base_url)
+            box = to_pixels(answer.get("box"), w, h) if answer.get("found") is True else None
+            if box:
+                return {"by": model, "page": path, "quote": str(answer.get("quote") or "")[:400],
+                        "box": [round(v) for v in box]}
+        return None
+    return explain
+
+
+def png_size(path: str) -> tuple[int, int]:
+    """Width and height from a PNG header, without an imaging library."""
+    with open(path, "rb") as f:
+        head = f.read(24)
+    if head[:8] != b"\x89PNG\r\n\x1a\n":
+        raise ValueError(f"{path} is not a PNG")
+    return int.from_bytes(head[16:20], "big"), int.from_bytes(head[20:24], "big")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--provider", default="ground-truth", help="ground-truth | meta | anthropic | xai | ollama")

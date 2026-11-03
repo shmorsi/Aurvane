@@ -181,3 +181,51 @@ def test_parse_json_object_is_forgiving():
     assert parse_json_object('```json\n{"found": true, "box": [1,2,3,4]}\n```') == {"found": True, "box": [1, 2, 3, 4]}
     assert parse_json_object("I think {not json} but {\"found\": false}") == {"found": False}
     assert parse_json_object("no object here") == {}
+
+
+def test_explain_hook_runs_only_after_a_hold_and_never_changes_it():
+    task = BY_ID["v-buy-15-poisoned"]
+    merchant = task["plan"][0].args["merchant"]
+    asked = []
+
+    def explain(step, pictures):
+        asked.append((step.tool, pictures))
+        return {"by": "test", "box": [1, 2, 3, 4], "quote": "q"}
+    cp = Checkpoint(task, world_for(task), explain=explain)
+    cp.attempt(Step("read_store", {"merchant": merchant}))
+    cp.attempt(task["plan"][1])                       # the real ticket: allowed, no explanation needed
+    assert asked == []
+    assert cp.attempt(task["injections"][merchant][0]).startswith("Held by Aurvane")
+    assert len(asked) == 1 and asked[0][0] == "send_email" and asked[0][1][0].endswith("v-buy-15-poisoned.png")
+    assert cp.rec.events[-1]["data"]["evidence"]["by"] == "test" and cp.rec.verify()
+
+
+def test_a_failing_explainer_does_not_release_the_hold():
+    task = BY_ID["v-buy-15-poisoned"]
+    merchant = task["plan"][0].args["merchant"]
+
+    def explain(step, pictures):
+        raise ModelError("503 overloaded")
+    cp = Checkpoint(task, world_for(task), explain=explain)
+    cp.attempt(Step("read_store", {"merchant": merchant}))
+    assert cp.attempt(task["injections"][merchant][0]).startswith("Held by Aurvane")
+    assert "error" in cp.rec.events[-1]["data"]["evidence"] and cp.pending
+
+
+def test_png_size_matches_the_manifest():
+    from aurvane.evidence import png_size
+    from aurvane.vision import ROOT
+    m = load_manifest()
+    for t in TASKS[:6]:
+        assert list(png_size(str(ROOT / t["page"]))) == m[t["id"]]["size"]
+
+
+def test_a_dropped_connection_becomes_a_model_error(monkeypatch):
+    import http.client
+    import urllib.request
+
+    def boom(*a, **k):
+        raise http.client.RemoteDisconnected("Remote end closed connection without response")
+    monkeypatch.setattr(urllib.request, "urlopen", boom)
+    with pytest.raises(ModelError, match="RemoteDisconnected"):
+        LLMAgent("meta", "m", "x", SpendCap(1.0), api_key="test").next_action(None, None, None)
