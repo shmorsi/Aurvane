@@ -106,6 +106,9 @@ agent's own runtime, and this project shows it holds when the attack is a pictur
 
 ## Video script (3 minutes, mapped to the rubric)
 
+The rendered film is `ui/aurvane-submission.mp4`, made by `ui/record_submission.py` from the
+committed results. The narration below matches its scenes, for an optional voice-over.
+
 Record the screen at 1080p. Every number said on camera must be on screen at the same time,
 read from a committed file. If a Muse Spark run is not committed, say "pending" and do not
 show a number.

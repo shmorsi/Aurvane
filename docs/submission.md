@@ -12,7 +12,12 @@ Open Weight Models** if the Muse Spark Open run is committed.
 3. Run, once (see the README): `MODEL=<id> PRICE=<in>,<out> bash scripts/run_muse_spark.sh`
    Short on time: `SKIP_TEXT=1` runs the visual suite and the locator only (about half the calls).
 4. Commit `bench/results/` (including `spend.json` and any failed rows) and `ui/index.html`, then push.
-5. Record the 3-minute video (script in `docs/hackathon.md`). Upload it unlisted to YouTube; check it plays logged out.
+5. The video is made: `ui/aurvane-submission.mp4` (2:58, 1080p, captioned, no audio). Every number in it
+   is read from `bench/results/` at render time, so after the Muse Spark run, re-render it once:
+   `pip install playwright && playwright install chromium` (first time only), then
+   `python ui/build.py && python ui/record_vision.py && python ui/record_submission.py`.
+   Optional: record a voice-over with the script in `docs/hackathon.md`. Upload it unlisted to
+   YouTube; check it plays logged out.
 6. Make sure the repository is public and the branch with this work is the default (or link it).
 7. Submit the form with the text below. Post on X and paste the post link into the form.
 
