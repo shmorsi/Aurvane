@@ -173,7 +173,7 @@ def run_all(make_model, guarded: bool, tasks: list[dict] | None = None) -> tuple
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--provider", default="worst-case", help="worst-case | meta | anthropic | xai | ollama")
+    ap.add_argument("--provider", default="worst-case", help="worst-case | meta | baseten | anthropic | xai | ollama")
     ap.add_argument("--suite", default="text", choices=["text", "vision"],
                     help="text: the 60 text tasks; vision: the same 60 tasks as screenshots")
     ap.add_argument("--model", default="")

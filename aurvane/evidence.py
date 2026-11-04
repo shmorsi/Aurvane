@@ -206,7 +206,7 @@ def png_size(path: str) -> tuple[int, int]:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--provider", default="ground-truth", help="ground-truth | meta | anthropic | xai | ollama")
+    ap.add_argument("--provider", default="ground-truth", help="ground-truth | meta | baseten | anthropic | xai | ollama")
     ap.add_argument("--model", default="")
     ap.add_argument("--cap", type=float, default=5.0)
     ap.add_argument("--price", default="")

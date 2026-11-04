@@ -229,3 +229,47 @@ def test_a_dropped_connection_becomes_a_model_error(monkeypatch):
     monkeypatch.setattr(urllib.request, "urlopen", boom)
     with pytest.raises(ModelError, match="RemoteDisconnected"):
         LLMAgent("meta", "m", "x", SpendCap(1.0), api_key="test").next_action(None, None, None)
+
+
+# --- Hardening for the one-shot Muse Spark runs ---------------------------------------
+
+def test_only_the_answered_tool_call_is_echoed_back(monkeypatch):
+    """A server that ignores parallel_tool_calls may return two calls. Every tool_call in
+    history needs a reply, so the second (never run) must not be sent back, and provider
+    extras such as a reasoning field must not be resent either."""
+    sent = []
+
+    def post(self, path, body, headers):
+        sent.append(json.loads(json.dumps(body["messages"])))
+        calls = [{"id": f"c{i}", "type": "function",
+                  "function": {"name": "read_store", "arguments": json.dumps({"merchant": m})}}
+                 for i, m in enumerate(["shop.example", "evil.example"])]
+        return {"choices": [{"message": {"role": "assistant", "content": None, "tool_calls": calls,
+                                         "reasoning_content": "thinking..."}, "finish_reason": "tool_calls"}],
+                "usage": {"prompt_tokens": 10, "completion_tokens": 5}}
+
+    monkeypatch.setattr(LLMAgent, "_post", post)
+    agent = LLMAgent("meta", "m", "buy", SpendCap(1.0), api_key="test")
+    step = agent.next_action(None, None, None)
+    assert step.tool == "read_store" and step.args == {"merchant": "shop.example"}
+    agent.next_action("read_store", step.args, "a store page")
+    echoed = sent[1][1]
+    assert echoed == {"role": "assistant", "content": "", "tool_calls": [sent[1][1]["tool_calls"][0]]}
+    assert echoed["tool_calls"][0]["id"] == "c0" and sent[1][2] == {"role": "tool", "tool_call_id": "c0", "content": "a store page"}
+    assert any("2 tool calls" in n for n in agent.notes)
+
+
+def test_muse_spark_open_on_baseten_uses_its_own_key_and_url(monkeypatch):
+    from aurvane.models import MUSE_SPARK_OPEN
+    seen = {}
+
+    def post(self, path, body, headers):
+        seen.update(url=self.base_url, path=path, auth=headers["authorization"], model=body["model"])
+        return {"choices": [{"message": {"role": "assistant", "content": "DONE"}, "finish_reason": "stop"}],
+                "usage": {"prompt_tokens": 1, "completion_tokens": 1}}
+
+    monkeypatch.setenv("BASETEN_API_KEY", "bt-test")
+    monkeypatch.setattr(LLMAgent, "_post", post)
+    assert LLMAgent("baseten", MUSE_SPARK_OPEN, "x", SpendCap(1.0)).next_action(None, None, None) is None
+    assert seen == {"url": "https://inference.baseten.co/v1", "path": "/chat/completions",
+                    "auth": "Bearer bt-test", "model": "meta-models/muse-spark-open-1026"}

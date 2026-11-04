@@ -1,8 +1,9 @@
 """Real models behind one plug, with a hard spending cap.
 
 The benchmark asks a model "what next?" through one method, `next_action`. This
-file answers it with a real model: Muse Spark (Meta Model API), Claude (Anthropic
-API), Grok (xAI), or an open-weights model through a local Ollama server. Every
+file answers it with a real model: Muse Spark (Meta Model API), Muse Spark Open
+(Meta's open weights, served by Baseten), Claude (Anthropic API), Grok (xAI), or an
+open-weights model through a local Ollama server. Every
 provider but Anthropic speaks the OpenAI-compatible chat completions API.
 
 Vision: when a tool returns a `Screenshot` (a page the agent can only see), the
@@ -36,10 +37,14 @@ PRICES = {
     "claude-sonnet-5-5": (2.00, 10.00),
     "claude-haiku-5-5": (0.10, 0.50),
 }
-# Meta Model API: OpenAI-compatible. Override with --base-url if your console shows another.
-BASE_URLS = {"meta": "https://api.meta.ai/v1", "anthropic": "https://api.anthropic.com/v1",
+# Meta Model API and Baseten are OpenAI-compatible. Override with --base-url if your console shows another.
+# Baseten serves Meta's open weights; for the hackathon the model id is meta-models/muse-spark-open-1026.
+BASE_URLS = {"meta": "https://api.meta.ai/v1", "baseten": "https://inference.baseten.co/v1",
+             "anthropic": "https://api.anthropic.com/v1",
              "xai": "https://api.x.ai/v1", "ollama": "http://localhost:11434/v1"}
-KEYS = {"meta": "META_MODEL_API_KEY", "anthropic": "ANTHROPIC_API_KEY", "xai": "XAI_API_KEY"}
+KEYS = {"meta": "META_MODEL_API_KEY", "baseten": "BASETEN_API_KEY", "anthropic": "ANTHROPIC_API_KEY",
+        "xai": "XAI_API_KEY"}
+MUSE_SPARK_OPEN = "meta-models/muse-spark-open-1026"
 MAX_TOKENS = 4096
 
 
@@ -168,7 +173,7 @@ def ping(provider: str, model: str, cap: SpendCap, base_url: str | None = None) 
 
 
 class LLMAgent:
-    """A real model behind one interface. provider: meta | anthropic | xai | ollama | any OpenAI-compatible."""
+    """A real model behind one interface. provider: meta | baseten | anthropic | xai | ollama | any OpenAI-compatible."""
 
     def __init__(self, provider: str, model: str, task: str, cap: SpendCap,
                  base_url: str | None = None, api_key: str | None = None):
@@ -254,8 +259,17 @@ class LLMAgent:
         self.cap.add(u.get("prompt_tokens", 0), u.get("completion_tokens", 0))
         msg = r["choices"][0]["message"]
         self.stop_reason = r["choices"][0].get("finish_reason", "")
-        self.messages.append(msg)
         calls = msg.get("tool_calls") or []
+        # Echo back only what the format defines, and only the call that will be answered:
+        # every tool_call in history needs a tool reply, so an unanswered second call (a
+        # server that ignores parallel_tool_calls) would make the next request invalid.
+        # Provider extras such as a reasoning field are kept in notes, not resent.
+        echo = {"role": "assistant", "content": msg.get("content") or ""}
+        if calls:
+            echo["tool_calls"] = calls[:1]
+            if len(calls) > 1:
+                self.notes.append(f"model proposed {len(calls)} tool calls in one turn; only the first was run")
+        self.messages.append(echo)
         if not calls:
             return None
         c = calls[0]

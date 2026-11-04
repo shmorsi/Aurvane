@@ -39,6 +39,8 @@ text filter will ever see it. This branch adds:
 - **Muse Spark on the Meta Model API** as the agent: it sees each page as an image and acts
   through tools. Aurvane never reads the picture. It doesn't need to: a destination that only the
   picture could have supplied is not trusted, so rule 4 holds it.
+- **Muse Spark Open on Baseten** (`meta-models/muse-spark-open-1026`) through the same plug,
+  `--provider baseten`, so the agent can run on open weights where the money is.
 - **An evidence locator.** When Aurvane holds an action, Muse Spark is asked to point at the
   sentence on the page that caused it. The Allow/Deny card shows that box. The model only
   explains; the guard, which is code, already decided.
@@ -51,6 +53,7 @@ Film, 30 s: [`ui/aurvane-vision.mp4`](ui/aurvane-vision.mp4) (recorded from the 
 ```bash
 python -m aurvane.bench --suite vision                  # worst-case agent, offline
 MODEL=<muse spark id> PRICE=<in>,<out> bash scripts/run_muse_spark.sh   # every Muse Spark run, once
+PROVIDER=baseten PRICE=<in>,<out> bash scripts/run_muse_spark.sh         # the same runs on Muse Spark Open
 ```
 
 ## Use it in your own agent
@@ -92,7 +95,7 @@ cp = Checkpoint(task, world, explain=locator("meta", "<muse spark id>", SpendCap
 | 3 minutes | [Results](#results) and the [red team](#red-team-12-smarter-attacks), including what still gets through |
 | 4 minutes | [`bench/PROTOCOL.md`](bench/PROTOCOL.md): hypotheses fixed before any real-model run |
 | 5 minutes | [`docs/threat-model.md`](docs/threat-model.md) and [`docs/vision.md`](docs/vision.md) |
-| Judging the hackathon | [`docs/hackathon.md`](docs/hackathon.md): what was built, how Muse Spark is used, the video script |
+| Judging the hackathon | [`docs/hackathon.md`](docs/hackathon.md): what was built and when, how Muse Spark is used, the video script; [`docs/submission.md`](docs/submission.md): the submission kit |
 
 ## Results
 
@@ -245,6 +248,7 @@ python ui/record.py                           # the films and the GIF (Playwrigh
 
 # Muse Spark on the Meta Model API: every run in both protocols, once, then the page is rebuilt.
 META_MODEL_API_KEY=...  MODEL=<muse spark id> PRICE=<in>,<out>  bash scripts/run_muse_spark.sh
+BASETEN_API_KEY=...  PROVIDER=baseten PRICE=<in>,<out>  bash scripts/run_muse_spark.sh   # Muse Spark Open
 
 # Other real models, same harness (protocol fixed in bench/PROTOCOL.md). Hard cap: 5 USD across all runs.
 ANTHROPIC_API_KEY=...  python -m aurvane.bench --provider anthropic --model claude-haiku-5-5   # first: cents

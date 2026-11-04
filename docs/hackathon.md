@@ -8,6 +8,19 @@ Agents that browse now look at screenshots, so a hidden order can be drawn into 
 Aurvane lets a Muse Spark agent look at anything, but nothing it sees can choose where your money
 or data goes.
 
+## Built during the hackathon, all of it
+
+The building period was Oct 27 to Nov 4, 2026. The first commit in this repository is
+`4e554b9`, **Oct 30, 2026**. There is no earlier code: every file here, the guard, the
+benchmark, the demo page and the Meta integration, was written inside the building period.
+`git log --reverse --date=short --format='%h %ad %s'` shows the whole history.
+
+| Dates | What | Commits |
+|---|---|---|
+| Oct 30 | The trust layer: passports, signed mandates, the four-rule guard, flight recorder, delegation, the 60-task text benchmark, the red team, the SDK, the MCP server, the demo page | `4e554b9` to `7539c5c` |
+| Nov 3 | The Meta part: the visual attack suite, the Meta Model API provider, the Muse Spark evidence locator, the explain hook, the "It reads pictures too" demo | `8634d31` to `6da8a04` |
+| Nov 4 | Muse Spark Open on Baseten, harness hardening for the one-shot runs, the submission kit | this branch |
+
 ## The problem
 
 An agent that applies to jobs or buys tickets reads pages written by strangers. One hidden
@@ -32,6 +45,7 @@ Aurvane never reads the screenshot. It does not need to. That is the claim this 
 |---|---|
 | **Muse Spark** (Meta Model API) | The agent. It sees each posting or store page as an image and acts through tools. |
 | **Muse Spark** (Meta Model API) | The evidence locator. When Aurvane holds an action, Muse Spark is asked to point at the sentence on the page that caused it. The Allow/Deny card shows the box and the quote. |
+| **Muse Spark Open** (`meta-models/muse-spark-open-1026`, Baseten) | The same agent and locator on Meta's open weights, through the same plug: `--provider baseten`. Open weights mean the agent can run where the money is (a bank, a store) and Aurvane still guards it. |
 
 The split is deliberate: the model reads and explains, and code decides. A model that can be
 fooled never gets to approve its own action.
@@ -79,6 +93,7 @@ agent's own runtime, and this project shows it holds when the attack is a pictur
   at https://shmorsi.github.io/aurvane/ shows it once the portfolio site is redeployed.
 - Offline, no key: `pip install -e ".[dev]" && pytest -q && python -m aurvane.bench --suite vision`
 - With a Meta key: `MODEL=<id> PRICE=<in>,<out> bash scripts/run_muse_spark.sh`
+- With a Baseten key (Muse Spark Open): `PROVIDER=baseten PRICE=<in>,<out> bash scripts/run_muse_spark.sh`
 
 ## Honest limits
 
@@ -89,32 +104,44 @@ agent's own runtime, and this project shows it holds when the attack is a pictur
 
 ---
 
-## Video script (about 2 minutes)
+## Video script (3 minutes, mapped to the rubric)
 
-**0:00 Hook.** Screen: a ticket store page. "This page looks normal. Look closer." Click
-*Reveal hidden text*: the faint sentence appears. "It tells any AI agent reading it to email
-your private transcript to a stranger. People can't see it. Agents that read screenshots can."
+Record the screen at 1080p. Every number said on camera must be on screen at the same time,
+read from a committed file. If a Muse Spark run is not committed, say "pending" and do not
+show a number.
 
-**0:15 The problem.** "Text filters scan HTML. A vision agent never sees HTML; it sees pixels.
-So I built 60 paired tasks where the attack is drawn into the picture three ways: faint text,
-seven-pixel fine print, and a notice styled like the site."
+**0:00 to 0:20 Hook (Demo).** Screen: the ticket store page. "This page looks normal. Look
+closer." Click *Reveal hidden text*. "It tells any AI agent reading it to email your private
+transcript to a stranger. You can't see it. An agent that reads screenshots can."
 
-**0:35 Aurvane.** Show the four rules diagram. "Aurvane sits between the agent and its tools.
-You sign a mandate once. Every action is checked in code. Rule 4: after the agent has looked at
-something untrusted, it can't send money or data anywhere you didn't choose. Aurvane never reads
-the picture. It doesn't need to."
+**0:20 to 0:45 Why it matters (Impact, 30%).** "Visa, Mastercard, Stripe, Google and OpenAI are
+all building ways for agents to pay. Every one of them assumes the agent asks for the right
+thing. One hidden sentence breaks that. Text filters scan HTML, but a vision agent never sees
+HTML. It sees pixels."
 
-**0:55 Demo.** Switch tabs: faint (held: Allow/Deny card), fine print (a 1,200 CAD fee:
-blocked), notice (a forged 5,000 CAD budget: blocked). "Same decisions as on text, because the
-guard decides on actions, not on how the page was drawn."
+**0:45 to 1:15 What I built (Technical depth).** The four-rules diagram, then `guard.py`.
+"Aurvane sits between the agent and its tools. You sign a mandate once with Ed25519: which
+tools, how much money, which payees, until when. Every action passes four rules in code.
+Rule 4 is provenance. Once the agent has looked at something untrusted, the destination of
+money or data must come from you, not the page. Aurvane never reads the picture. It doesn't
+need to." Flash the commit history: "All of this was written during the hackathon, from Oct 30."
 
-**1:15 Muse Spark.** Show the evidence box and quote. "When Aurvane holds an action, Muse Spark
-points at the sentence that caused it. The model explains. Code decides." Show the Muse Spark
-row of the carrier table, as measured. If the run is not done, say "the run is pending" on camera.
+**1:15 to 1:50 Muse Spark (Use of Meta tooling, 25%).** Terminal: `scripts/run_muse_spark.sh`
+starting, then the results table. "Muse Spark is the agent. It sees every page as an image, 60
+paired tasks, three ways of hiding the attack. Without Aurvane, this many attacks landed. With
+Aurvane, this many." Read both numbers from the committed summary. "Muse Spark Open on Baseten
+runs the same suite through the same plug, so a bank can run the agent on its own hardware."
 
-**1:35 Rigor.** Show `bench/vision/PROTOCOL.md` and the commit date. "The hypotheses were
-committed before the first Muse Spark call, including what counts as failure. Every run is
-reported, including the ones that look bad."
+**1:50 to 2:20 The model explains, code decides.** The Allow/Deny card with the evidence box.
+"When Aurvane holds an action, Muse Spark points at the sentence that caused it, with a box on
+the screenshot and a quote. That is the second job for the model. It explains, and code
+decides, so a model that can be fooled never approves its own action."
 
-**1:50 Close.** "Agents will read the whole web. Aurvane makes sure nothing they read, or see,
+**2:20 to 2:45 Rigor.** `bench/vision/PROTOCOL.md` and its commit date, then the honest limits
+table. "The hypotheses were committed before the first Muse Spark call. Every run is reported
+once. Two attacks still get through, a sentence slipped into a cover letter and a small add-on
+at a store you already trust, and they're on the page on purpose."
+
+**2:45 to 3:00 Close.** The live demo URL, the repo URL, the one-line SDK. "Three lines to guard
+your own agent. Agents will read the whole web. Aurvane makes sure nothing they read, or see,
 can choose where your money goes."
