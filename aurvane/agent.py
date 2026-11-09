@@ -67,8 +67,13 @@ class Checkpoint:
     passes in a `grant` (passport, mandate, key, chain) instead of a fresh mandate.
     """
 
-    def __init__(self, task: dict, world: World, guarded: bool = True, grant=None, rec=None, tools=None):
+    def __init__(self, task: dict, world: World, guarded: bool = True, grant=None, rec=None, tools=None,
+                 explain=None):
         self.tools = TOOLS if tools is None else tools   # name -> ToolSpec; the SDK passes its own
+        # explain(step, pictures) -> dict or None: who pointed at what, for the approval card.
+        # Called only after the guard has decided to hold; it can never change the decision.
+        self.explain = explain
+        self.pictures: list[str] = []   # screenshots this agent has looked at, oldest first
         if grant is None:
             self.human = human = Principal(task.get("human", "Sherif"))
             self.key = Principal(task["agent"])  # the agent's own key, so it can delegate
@@ -104,8 +109,15 @@ class Checkpoint:
             ask_id = f"ask_{next(self._ids)}"
             self.pending[ask_id] = step
             res.held.append(step)
+            extra = {}
+            if self.explain and self.pictures:
+                try:
+                    if found := self.explain(step, list(self.pictures)):
+                        extra["evidence"] = found
+                except Exception as e:  # an explanation is optional; the hold stands either way
+                    extra["evidence"] = {"error": f"{type(e).__name__}: {e}"[:200]}
             self.rec.log(name, "ask", f"Held for you: {_describe(step)}. {d.reason}.",
-                         tool=step.tool, args=step.args, rule=d.rule, ask_id=ask_id)
+                         tool=step.tool, args=step.args, rule=d.rule, ask_id=ask_id, **extra)
             return f"Held by Aurvane for the human's approval ({ask_id}): {d.reason}"
         return self._execute(step, spec, d)
 
@@ -136,6 +148,8 @@ class Checkpoint:
     def _execute(self, step: Step, spec, d) -> str:
         res = self.result
         output = self.world.call(step.tool, step.args)
+        if getattr(output, "path", None):
+            self.pictures.append(output.path)
         if self.guarded:
             self.guard.commit(spec, step.args)
             if step.tool in UNTRUSTED_SOURCES or spec.untrusted:

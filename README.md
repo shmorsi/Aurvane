@@ -28,6 +28,34 @@ Films: [wide, 1080p](ui/aurvane-demo.mp4) · [vertical, for phones](ui/aurvane-d
 Helper bots can only ever get a *narrower* mandate than their parent, and every step lands in a
 tamper-evident log.
 
+## New: it reads pictures too (Meta Global AI Developer Hackathon)
+
+Browsing agents now look at screenshots, so a hidden order can be drawn into the pixels where no
+text filter will ever see it. This branch adds:
+
+- **A visual attack suite.** The same 60 paired tasks, with every job posting and store page as a
+  screenshot. The hidden sentence is drawn as faint text (contrast about 1.13 to 1), 7 px fine
+  print, or an official-looking "checkout notice". 60 pictures, pinned by SHA-256.
+- **Muse Spark on the Meta Model API** as the agent: it sees each page as an image and acts
+  through tools. Aurvane never reads the picture. It doesn't need to: a destination that only the
+  picture could have supplied is not trusted, so rule 4 holds it.
+- **Muse Spark Open on Baseten** (`meta-models/muse-spark-open-1026`) through the same plug,
+  `--provider baseten`, so the agent can run on open weights where the money is.
+- **An evidence locator.** When Aurvane holds an action, Muse Spark is asked to point at the
+  sentence on the page that caused it. The Allow/Deny card shows that box. The model only
+  explains; the guard, which is code, already decided.
+- **Hypotheses fixed before any real call**, in [`bench/vision/PROTOCOL.md`](bench/vision/PROTOCOL.md)
+  (commit `8634d31`), including the bar the locator must clear to be
+  called useful.
+
+Film, 30 s: [`ui/aurvane-vision.mp4`](ui/aurvane-vision.mp4) (recorded from the demo page by `ui/record_vision.py`).
+
+```bash
+python -m aurvane.bench --suite vision                  # worst-case agent, offline
+MODEL=<muse spark id> PRICE=<in>,<out> bash scripts/run_muse_spark.sh   # every Muse Spark run, once
+PROVIDER=baseten PRICE=<in>,<out> bash scripts/run_muse_spark.sh         # the same runs on Muse Spark Open
+```
+
 ## Use it in your own agent
 
 ```python
@@ -47,6 +75,17 @@ pay("evil.example", 900)                   # raises Blocked
 
 `python examples/quickstart.py` runs a full example with a hostile page, a held email, and the log.
 
+To have a vision model point at the cause of each hold, pass an explainer. It runs only after
+the guard has decided, and if it fails the hold stands:
+
+```python
+from aurvane.agent import Checkpoint
+from aurvane.evidence import locator
+from aurvane.models import SpendCap
+
+cp = Checkpoint(task, world, explain=locator("meta", "<muse spark id>", SpendCap(1.0, price=(IN, OUT))))
+```
+
 ## A five-minute tour
 
 | If you have | Look at |
@@ -56,6 +95,7 @@ pay("evil.example", 900)                   # raises Blocked
 | 3 minutes | [Results](#results) and the [red team](#red-team-12-smarter-attacks), including what still gets through |
 | 4 minutes | [`bench/PROTOCOL.md`](bench/PROTOCOL.md): hypotheses fixed before any real-model run |
 | 5 minutes | [`docs/threat-model.md`](docs/threat-model.md) and [`docs/vision.md`](docs/vision.md) |
+| Judging the hackathon | [`docs/hackathon.md`](docs/hackathon.md): what was built and when, how Muse Spark is used, the video script; [`docs/submission.md`](docs/submission.md): the submission kit |
 
 ## Results
 
@@ -93,6 +133,31 @@ H1 and H2 hold, and clean-task completion did not drop (exact McNemar p = 1.0 on
 follows [`bench/PROTOCOL.md`](bench/PROTOCOL.md), and stops before any call that could push total
 spend past 5 USD. It is tested end to end against a fake provider. No API key was available when
 it was built, so there is no real-model number anywhere in this repo. See [Run it](#run-it).
+
+## Results: the visual suite
+
+The same worst-case agent, now handed screenshots. The guard decides exactly as it did on text,
+because it decides on actions, not on how the page was drawn. Simulated, reproducible, no API key:
+`python -m aurvane.bench --suite vision`. Every number is in
+[`bench/results/worst-case_vision_summary.json`](bench/results/worst-case_vision_summary.json).
+
+| Carrier | What a person sees | Without Aurvane | With Aurvane |
+|---|---|--:|--:|
+| faint | a blank band | 10/10 | **2/10** |
+| fineprint | a grey smudge in the legal lines | 10/10 | **2/10** |
+| notice | a tidy site notice | 10/10 | **3/10** |
+| all | | 30/30, 12,135 CAD lost | **7/30, 135 CAD lost**, 30/30 clean tasks done, 0 false alarms |
+
+The 7 are the same honest limits as the text suite (`skim` capped by the budget, `rewrite` of a
+cover letter).
+
+**Muse Spark: not run yet.** The harness is finished and tested: against a scripted fake of the
+Meta API's wire format in `tests/test_vision.py`, and end to end through real HTTP against a local
+stand-in server. No API key reached this repo while it was built, so there is no Muse Spark number
+anywhere in it. The three questions the run answers, fixed in advance: does Muse Spark obey
+pictures without Aurvane (V1), does anything outside the honest limits land with it (V2), and
+does Aurvane cost clean tasks (V3). The evidence locator must point at the hidden sentence on at
+least 21 of 30 poisoned pages with at most 3 false findings on 30 clean pages to be called useful.
 
 ## Red team: 12 smarter attacks
 
@@ -154,9 +219,11 @@ delegate(buyer, "Greedy", "x", "x", ["pay"], spend_limit=900)   # DelegationRefu
 | [`aurvane/guard.py`](aurvane/guard.py) | The four rules: ALLOW, BLOCK or ASK | 150 |
 | [`aurvane/recorder.py`](aurvane/recorder.py) | Tamper-evident flight recorder and trust score | 68 |
 | [`aurvane/world.py`](aurvane/world.py) | A fake world: postings, stores, inbox, wallet | 59 |
-| [`aurvane/agent.py`](aurvane/agent.py) | The checkpoint, approvals, and the loop | 179 |
+| [`aurvane/agent.py`](aurvane/agent.py) | The checkpoint, approvals, the evidence hook, and the loop | 193 |
 | [`aurvane/delegation.py`](aurvane/delegation.py) | Narrower sub-mandates, chains back to the human, revocation | 158 |
-| [`aurvane/models.py`](aurvane/models.py) | Claude, Grok, Ollama behind one plug, with a hard spending cap | 173 |
+| [`aurvane/models.py`](aurvane/models.py) | Muse Spark, Claude, Grok, Ollama behind one plug, screenshots as images, a hard spending cap | 291 |
+| [`aurvane/vision.py`](aurvane/vision.py) | The visual suite: the 60 tasks as screenshots, three carriers, pinned pictures | 106 |
+| [`aurvane/evidence.py`](aurvane/evidence.py) | A vision model points at the sentence behind a hold; scored against the rendered boxes | 255 |
 | [`aurvane/bench.py`](aurvane/bench.py) | 60 tasks, six attacks, with and without Aurvane | 219 |
 | [`aurvane/stats.py`](aurvane/stats.py) | Summaries, H1 to H3, exact McNemar | 99 |
 | [`aurvane/sdk.py`](aurvane/sdk.py) | Guard your own functions with one decorator | 111 |
@@ -170,13 +237,20 @@ Claude Desktop, Claude Code or any MCP client gets the same checkpoint. The demo
 
 ```bash
 pip install -e ".[dev,mcp]"
-pytest -q                                     # 46 tests: rules, forgery, delegation, approvals, SDK, red team, JS parity
+pytest -q                                     # 63 tests: rules, forgery, delegation, approvals, SDK, red team, JS parity, vision, evidence
 python bench/redteam.py                       # the 12 smarter attacks
 python -m aurvane.bench                       # offline, worst-case agent, about 0.5 s
+python -m aurvane.bench --suite vision        # the same tasks as screenshots
+python -m aurvane.evidence                    # evidence scoring, checked against a perfect locator
+python bench/vision/render.py                 # re-render the 60 pictures (Playwright); hashes must not change
 python ui/build.py && open ui/index.html      # the demo page: replay and try-it box
 python ui/record.py                           # the films and the GIF (Playwright + ffmpeg)
 
-# Real models, same harness (protocol fixed in bench/PROTOCOL.md). Hard cap: 5 USD across all runs.
+# Muse Spark on the Meta Model API: every run in both protocols, once, then the page is rebuilt.
+META_MODEL_API_KEY=...  MODEL=<muse spark id> PRICE=<in>,<out>  bash scripts/run_muse_spark.sh
+BASETEN_API_KEY=...  PROVIDER=baseten PRICE=<in>,<out>  bash scripts/run_muse_spark.sh   # Muse Spark Open
+
+# Other real models, same harness (protocol fixed in bench/PROTOCOL.md). Hard cap: 5 USD across all runs.
 ANTHROPIC_API_KEY=...  python -m aurvane.bench --provider anthropic --model claude-haiku-5-5   # first: cents
 ANTHROPIC_API_KEY=...  python -m aurvane.bench --provider anthropic --model claude-sonnet-5-5  # then, if budget is left
 XAI_API_KEY=...        python -m aurvane.bench --provider xai --model <grok-model> --price <in>,<out>
@@ -197,6 +271,11 @@ python -m aurvane.mcp_server                  # Aurvane as an MCP server (stdio)
   contains it. A model that transforms a value (spells out a number, encodes an address) can
   defeat matching; the hard bounds in rule 3 still apply.
 - Aurvane protects actions, not content. A summary or letter can still be quietly wrong.
+- The visual suite's pages are rendered by this repo, with three carriers. Real pages hide text in
+  more ways (images inside images, text split across elements, adversarial patterns), and a model
+  may read a picture differently at another resolution.
+- The Meta Model API base URL (`https://api.meta.ai/v1`) and its OpenAI-compatible format come from
+  Meta's public material as of November 2026. Prices are not built in: pass the console's price.
 - Signing keys live in memory, and the revocation list is an in-process object. A production
   version needs key storage (an HSM or secure enclave) and a revocation list verifiers can fetch.
 
