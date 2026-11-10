@@ -39,12 +39,51 @@ a { color: var(--aurora); text-decoration: none; }
 a:hover { text-decoration: underline; }
 :focus-visible { outline: 2px solid var(--aurora); outline-offset: 2px; }
 
-header.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 18px; border-bottom: 1px solid var(--line); }
-.mark { font: 500 13px/1 var(--display); letter-spacing: 0.22em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; color: var(--ink); }
-.mark svg { width: 26px; height: 26px; flex: none; }
-.say { font: 400 12px/1 var(--body); color: var(--mute); letter-spacing: .04em; text-transform: none; }
-.top nav { display: flex; gap: 22px; font: 600 12px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
-.top nav a { color: var(--mute); }
+/* The site header: the same bar as every other page of shmorsi.github.io (assets/site.css there). */
+.site-header {
+  position: sticky; top: 0; z-index: 40; margin-inline: -16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px;
+  padding-inline: max(16px, calc((100vw - 1180px) / 2));
+  background: var(--void); border-bottom: 1px solid var(--line); transition: transform .45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+body.tucked .site-header { transform: translateY(-101%); }
+.wordmark { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font: 600 13px/1 var(--display); letter-spacing: .24em; text-transform: uppercase; white-space: nowrap; padding: 12px 0; }
+.wordmark:hover { text-decoration: none; }
+.wordmark::before { content: ""; width: 8px; height: 8px; background: var(--aurora); flex: none; }
+.header-tools { display: flex; align-items: center; gap: 4px; }
+.site-nav { display: flex; align-items: center; }
+.site-nav a { position: relative; display: inline-flex; align-items: center; min-height: 48px; padding: 12px 11px; font: 600 12px/1 var(--body); letter-spacing: .15em; text-transform: uppercase; color: var(--mute); }
+.site-nav a:hover, .site-nav a[aria-current] { color: var(--ink); text-decoration: none; }
+.site-nav a[aria-current]::after { content: ""; position: absolute; left: 11px; right: 11px; bottom: 9px; height: 1px; background: var(--aurora); }
+.site-nav a.nav-resume { min-height: 40px; margin-left: 8px; padding: 0 14px; color: var(--ink); border: 1.5px solid var(--line-strong); }
+.site-nav a.nav-resume:hover { background: var(--ink); color: var(--void); border-color: var(--ink); }
+.menu-button { display: none; align-items: center; justify-content: center; min-height: 40px; padding: 0 14px; font: 600 12px/1 var(--body); letter-spacing: .15em; text-transform: uppercase;
+  background: transparent; color: var(--ink); border: 1.5px solid var(--line-strong); cursor: pointer; }
+
+/* This page's own sections: a second bar under the header, like the section index on the project pages. */
+.views { position: sticky; top: 64px; z-index: 30; margin-inline: -16px; background: var(--void); border-bottom: 1px solid var(--line); transition: top .45s cubic-bezier(0.16, 1, 0.3, 1); }
+body.tucked .views { top: 0; }
+.views-in { max-width: 1180px; margin: 0 auto; min-height: 48px; padding-inline: 16px; display: flex; align-items: center; gap: 4px 20px;
+  overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; font: 600 11px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+.views-in::-webkit-scrollbar { display: none; }
+.views-in a { color: var(--mute); padding: 12px 0; flex: none; }
+.views-in a:hover { color: var(--ink); text-decoration: none; }
+@media (min-width: 1213px) { .views-in { padding-inline: 0; } }
+.mark { font: 600 13px/1 var(--display); letter-spacing: 0.18em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; color: var(--ink) !important; margin-right: 8px; }
+.mark svg { width: 22px; height: 22px; flex: none; }
+.wrap { padding-top: 40px; scroll-margin-top: 120px; }
+.wrap section[id], .wrap [id] { scroll-margin-top: 124px; }
+@media (max-width: 900px) {
+  .menu-button { display: inline-flex; }
+  .site-nav { display: none; position: fixed; top: 64px; left: 0; right: 0; bottom: 0; z-index: 35; flex-direction: column; align-items: stretch; justify-content: flex-start;
+    padding: 12px 16px 32px; background: var(--void); overflow-y: auto; }
+  .site-nav.open { display: flex; }
+  .site-nav a, .site-nav a.nav-resume { font-size: 22px; letter-spacing: .12em; font-weight: 500; color: var(--ink); margin: 0; padding: 16px 0; min-height: 56px; border: 0; border-bottom: 1px solid var(--line); }
+  .site-nav a[aria-current]::after { display: none; }
+  .site-nav a[aria-current] { color: var(--aurora); }
+  .wordmark { letter-spacing: .16em; font-size: 12px; }
+  body.nav-open { overflow: hidden; }
+}
 
 .hero { display: grid; gap: 14px; max-width: 760px; }
 .eyebrow { font: 600 12px/1 var(--body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--aurora); }
@@ -263,7 +302,6 @@ footer a { color: var(--mute); }
   .ev .h { display: none; }
   .bar { grid-template-columns: 84px minmax(0, 1fr); }
   .bar .lab { grid-column: 2; text-align: left; }
-  .top nav { display: none; }
   .room .phone { top: auto; bottom: 12px; padding-bottom: 12px; }
   .room .phone .w, .room .phone .h span:last-child { display: none; }
   .room.asking .caption { display: none; }
