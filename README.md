@@ -259,6 +259,11 @@ XAI_API_KEY=...        python -m aurvane.bench --provider xai --model <grok-mode
 python -m aurvane.mcp_server                  # Aurvane as an MCP server (stdio)
 ```
 
+The real-model runs can also be started from GitHub, with no local setup: add an `ANTHROPIC_API_KEY`
+repository secret, then Actions > **real-model benchmark** > Run workflow
+([`.github/workflows/real-models.yml`](.github/workflows/real-models.yml)). It runs each model once
+under the same 5 USD cap and pushes the result files to a branch for review.
+
 ## Limits
 
 - The headline numbers come from a simulated worst-case agent. Real-model runs measure how often

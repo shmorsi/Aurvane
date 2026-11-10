@@ -1,0 +1,81 @@
+name: real-model benchmark
+
+# Run the benchmark against real Claude models, once, with the guard off and on.
+# Started by hand only (Actions tab > "real-model benchmark" > Run workflow). It needs one
+# repository secret, ANTHROPIC_API_KEY (Settings > Secrets and variables > Actions).
+#
+# The harness stops before any call that could take total spend past the cap (bench/PROTOCOL.md),
+# and the ledger in bench/results/spend.json carries that cap across runs. Results are pushed to
+# a new branch, bench/real-models-<run number>, for review: nothing lands on main by itself.
+# A failed or partial run is kept and reported as it is, never rerun for a better number.
+
+on:
+  workflow_dispatch:
+    inputs:
+      models:
+        description: "Models to run, in order, space-separated (cheapest first)"
+        default: "claude-haiku-5-5 claude-sonnet-5-5"
+        required: true
+      suite:
+        description: "text (the 60 text tasks) or vision (the same tasks as screenshots)"
+        default: "text"
+        type: choice
+        options: [text, vision]
+      cap:
+        description: "Hard spending cap in USD, across every run that has ever used this ledger"
+        default: "5"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev,mcp]"
+      - name: The key is set
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::error::ANTHROPIC_API_KEY is not set. Add it under Settings > Secrets and variables > Actions, then run this again. Nothing was called and nothing was spent."
+            exit 1
+          fi
+      - name: The offline suite still passes
+        run: pytest -q
+      - name: Run each model once (guard off, then guard on)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MODELS: ${{ inputs.models }}
+          SUITE: ${{ inputs.suite }}
+          CAP: ${{ inputs.cap }}
+        run: |
+          for model in $MODELS; do
+            echo "== $model ($SUITE suite, cap $CAP USD)"
+            # A model that hits the cap or errors is reported and the loop moves on; its partial files are kept.
+            python -m aurvane.bench --provider anthropic --model "$model" --suite "$SUITE" --cap "$CAP" || echo "::warning::$model did not finish; see the log and bench/results/"
+          done
+          echo "### Spend ledger" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat bench/results/spend.json >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || echo "{}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - name: Push the results to a branch for review
+        run: |
+          branch="bench/real-models-${{ github.run_number }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add bench/results
+          if git diff --cached --quiet; then
+            echo "::warning::The run changed nothing under bench/results."
+          else
+            git commit -m "Real-model benchmark: ${{ inputs.models }} (${{ inputs.suite }} suite, run ${{ github.run_number }})"
+            git push origin "$branch"
+            echo "Results are on the branch \`$branch\`. Review them, then merge it and rebuild the page (\`python ui/build.py\`)." >> "$GITHUB_STEP_SUMMARY"
+          fi
