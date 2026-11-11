@@ -31,7 +31,7 @@ tamper-evident log.
 ## New: it reads pictures too (Meta Global AI Developer Hackathon)
 
 Browsing agents now look at screenshots, so a hidden order can be drawn into the pixels where no
-text filter will ever see it. This branch adds:
+text filter will ever see it. Aurvane now has:
 
 - **A visual attack suite.** The same 60 paired tasks, with every job posting and store page as a
   screenshot. The hidden sentence is drawn as faint text (contrast about 1.13 to 1), 7 px fine

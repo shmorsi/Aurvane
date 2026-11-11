@@ -19,7 +19,7 @@ benchmark, the demo page and the Meta integration, was written inside the buildi
 |---|---|---|
 | Oct 30 | The trust layer: passports, signed mandates, the four-rule guard, flight recorder, delegation, the 60-task text benchmark, the red team, the SDK, the MCP server, the demo page | `4e554b9` to `7539c5c` |
 | Nov 3 | The Meta part: the visual attack suite, the Meta Model API provider, the Muse Spark evidence locator, the explain hook, the "It reads pictures too" demo | `8634d31` to `6da8a04` |
-| Nov 4 | Muse Spark Open on Baseten, harness hardening for the one-shot runs, the submission kit | this branch |
+| Nov 4 | Muse Spark Open on Baseten, harness hardening for the one-shot runs, the submission kit | `3160bbc` to `261b753` |
 
 ## The problem
 
