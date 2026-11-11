@@ -58,8 +58,8 @@
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 
   function row(step, d) {
-    const r = el("div", "step" + (step.injected ? " inj" : ""));
-    const p = el("span", "pill " + (step.prose ? "attack" : pill[d.outcome]), step.prose ? "gets through" : say[d.outcome]);
+    const r = el("div", "av-step" + (step.injected ? " inj" : ""));
+    const p = el("span", "pill " + (step.prose ? "atk" : pill[d.outcome]), step.prose ? "gets through" : say[d.outcome]);
     r.append(p, el("span", "act", describe(step)));
     const why = step.prose ? "Aurvane guards actions, not prose. This is what still gets through." : d.reason + (d.bounded ? " (bounded)" : "") + ".";
     r.append(el("span", "why", `Rule: ${d.rule}. ${why}`));
@@ -68,7 +68,7 @@
   }
 
   function phone(step, guard, pillEl, whyRow) {
-    const card = el("div", "phone");
+    const card = el("div", "av-phone");
     const h = el("div", "h"); h.append(el("span", null, "Aurvane · held for you"), el("span", null, "now"));
     const yes = el("button", "allow", "Allow"), no = el("button", "deny", "Deny");
     [yes, no].forEach((b) => { b.type = "button"; b.setAttribute("aria-pressed", "false"); });

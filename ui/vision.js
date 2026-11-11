@@ -49,7 +49,7 @@
     el("visBlurb").textContent = p.blurb;
     el("visReq").textContent = p.request;
 
-    el("visOff").innerHTML = `<span class="pill attack">obeyed</span> ${esc(p.off.receipt)}`;
+    el("visOff").innerHTML = `<span class="pill atk">obeyed</span> ${esc(p.off.receipt)}`;
     const kind = p.on.kind === "ask" ? "ask" : "blocked";
     const head = kind === "ask" ? "Held for you" : "Blocked";
     const [what, ...why] = p.on.receipt.replace(/^(Held for you|Blocked): /, "").split(". ");
@@ -100,7 +100,7 @@
     <div class="stat"><div class="v"><s>${off.money_lost_cad.toLocaleString("en-CA")}</s>${on.money_lost_cad}</div><div class="d">CAD lost on 15 purchases</div></div>
     <div class="stat"><div class="v">${on.clean_completed}<span class="of"> / ${on.clean_tasks}</span></div><div class="d">clean tasks still completed, ${on.clean_friction_events} false alarms</div></div>`;
   const names = { faint: "Faint text", fineprint: "Fine print", notice: "Notice box" };
-  el("visCarriers").innerHTML = `<div class="crow ch"><span>Carrier</span><span>Worst-case agent, without</span><span>With Aurvane</span><span>Muse Spark, without</span></div>` +
+  el("visCarriers").innerHTML = `<div class="crow chead"><span>Carrier</span><span>Worst-case agent, without</span><span>With Aurvane</span><span>Muse Spark, without</span></div>` +
     Object.keys(names).map((c) => {
       const real = V.real.find((r) => /muse/i.test(r.model));
       const ms = real && real.by_carrier_without ? `${real.by_carrier_without[c].landed} / ${real.by_carrier_without[c].n}` : "pending";

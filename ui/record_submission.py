@@ -218,12 +218,12 @@ def play_slide(body, cues):
 
 
 TRY_CSS = """
-body { overflow:hidden; } .wrap > *:not(#try) { display:none !important; }
+body { overflow:hidden; } .views, footer { display:none !important; } .wrap > *:not(#try) { display:none !important; }
 .wrap { max-width:1300px; padding-top:40px; } #try { zoom:1.42; }
 #try .sec-h h2 { font-size:44px; } #try .sec-h p { font-size:22px; }
-#film-cap { position:fixed; left:140px; right:140px; bottom:44px; font:500 38px/1.25 var(--display); color:var(--ink);
+#film-cap { position:fixed; left:140px; right:140px; bottom:44px; font:500 38px/1.25 var(--font); color:var(--ink);
   background:linear-gradient(transparent, rgba(0,0,0,.92) 30%); padding:40px 0 0; z-index:9; }
-#film-cap b { color:var(--aurora); font-weight:500; }
+#film-cap b { color:var(--accent); font-weight:500; }
 """
 
 

@@ -8,7 +8,7 @@
 const DATA = /*__DATA__*/null;
 const $ = (id) => document.getElementById(id);
 const cv = $("cv"), ctx = cv.getContext("2d");
-const FB = getComputedStyle(document.documentElement).getPropertyValue("--body").trim();
+const FB = getComputedStyle(document.documentElement).getPropertyValue("--font").trim();
 const FM = getComputedStyle(document.documentElement).getPropertyValue("--mono").trim();
 let SPEED = 1, AUTO = true, runIdx = 0, mode = "on", t = 0, playing = true, last = performance.now();
 let W = 0, H = 0, dpr = 1, K = 1, VW = 0, VH = 0, lastIdx = -1, shownScore = 100;
@@ -53,14 +53,14 @@ function phoneFor(idx) {
 function updateHud(st, ev, isAttack) {
   shownScore += (st.score - shownScore) * (reduce ? 1 : 0.12);
   $("score").textContent = Math.round(shownScore);
-  $("score").style.color = st.score < 60 ? "var(--signal)" : "var(--ink)";
+  $("score").style.color = st.score < 60 ? "var(--rose)" : "var(--ink)";
   $("loss").textContent = `${Math.round(st.loss)} CAD lost`;
   $("loss").classList.toggle("bad", st.loss > 0);
   if (st.idx === lastIdx) return;
   lastIdx = st.idx;
   const k = ev.kind === "note" ? "mandate" : isAttack && !contained(ev) && ev.kind !== "delegate" ? "attack lands"
     : { ask: "held for you", denied: "you denied", approved: "you allowed" }[ev.kind] || ev.kind;
-  const color = ev.kind === "blocked" || k === "attack lands" ? "var(--signal)" : ["ask", "denied"].includes(ev.kind) ? "var(--amber)" : "var(--aurora)";
+  const color = ev.kind === "blocked" || k === "attack lands" ? "var(--rose)" : ["ask", "denied"].includes(ev.kind) ? "var(--warm)" : "var(--accent)";
   $("capK").textContent = k; $("capK").style.color = color;
   $("capT").textContent = ev.receipt;
   $("story").textContent = story(ev, run(), isAttack);
@@ -103,7 +103,7 @@ function renderLog() {
   const r = run();
   $("log").innerHTML = r.events.map((e, i) => {
     const atk = r.attack_seqs.includes(e.seq) && (e.kind === "action" || e.kind === "read");
-    return `<div class="ev" data-i="${i}"><span class="s">${String(e.seq).padStart(2, "0")}</span><span class="pill ${atk ? "attack" : e.kind}">${atk ? "attack" : LABEL[e.kind]}</span><span class="r"></span><span class="h">${e.hash.slice(0, 10)}</span></div>`;
+    return `<div class="ev" data-i="${i}"><span class="s">${String(e.seq).padStart(2, "0")}</span><span class="pill ${atk ? "atk" : e.kind}">${atk ? "attack" : LABEL[e.kind]}</span><span class="r"></span><span class="h">${e.hash.slice(0, 10)}</span></div>`;
   }).join("");
   document.querySelectorAll(".ev .r").forEach((el, i) => { el.textContent = r.events[i].receipt; });
   document.querySelectorAll(".ev").forEach((el) => el.addEventListener("click", () => { t = +el.dataset.i * D + 0.01; lastIdx = -1; }));
@@ -136,7 +136,7 @@ function renderResults() {
     <div class="stat"><div class="v">${on.clean_completed}/${on.clean_tasks}</div><div class="d">normal tasks completed with Aurvane on, ${on.clean_friction_events} false alarms</div></div>`;
   $("bars").innerHTML = Object.keys(off.by_attack).map((k) => {
     const a = off.by_attack[k], b = on.by_attack[k];
-    return `<div class="bar"><span class="name">${k}</span><span class="track"><i class="off" style="width:${100 * a.landed / a.n}%"></i><i class="on ${b.landed ? "" : "zero"}" style="width:${100 * b.landed / b.n}%"></i></span><span class="lab">${a.landed}/${a.n} → ${b.landed}/${b.n}</span></div>`;
+    return `<div class="bar"><span class="name">${k}</span><span class="track"><i class="off" style="width:${100 * a.landed / a.n}%"></i><i class="on ${b.landed ? "" : "nil"}" style="width:${100 * b.landed / b.n}%"></i></span><span class="blab">${a.landed}/${a.n} → ${b.landed}/${b.n}</span></div>`;
   }).join("");
   const rt = DATA.redteam, chip = { contained: "em-block", capped: "em-ask", "gets through": "em-through" };
   $("redteamSum").textContent = `${rt.contained} contained, ${rt.capped} capped by the budget, ${rt["gets through"]} get through. Worst loss: ${rt.max_loss_cad} CAD.`;

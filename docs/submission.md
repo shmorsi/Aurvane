@@ -11,7 +11,7 @@ Open Weight Models** if the Muse Spark Open run is committed.
 2. Create an API key. Note the model id and price shown in the console.
 3. Run, once (see the README): `MODEL=<id> PRICE=<in>,<out> bash scripts/run_muse_spark.sh`
    Short on time: `SKIP_TEXT=1` runs the visual suite and the locator only (about half the calls).
-4. Commit `bench/results/` (including `spend.json` and any failed rows) and `ui/index.html`, then push.
+4. Commit `bench/results/` (including `spend.json` and any failed rows), `ui/index.html` and `ui/site/index.html`, then push.
 5. The video is made: `ui/aurvane-submission.mp4` (2:58, 1080p, captioned, no audio). Every number in it
    is read from `bench/results/` at render time, so after the Muse Spark run, re-render it once:
    `pip install playwright && playwright install chromium` (first time only), then

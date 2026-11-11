@@ -29,17 +29,18 @@ CHROME = "/opt/pw-browsers/chromium"  # the container's Chromium; Playwright's o
 
 FILM_CSS = """
 body { padding: 0 !important; overflow: hidden; }
-.wrap > *:not(.stage) { display: none !important; }
-.wrap { max-width: none; display: block; }
-.stage { display: block; }
+.views, footer, #room .sec-h { display: none !important; }
+.wrap > *:not(#room) { display: none !important; }
+.wrap { max-width: none; display: block; padding: 0; }
+.av-stage { display: block; }
 .panel, .mode-tag, .room .caption { display: none !important; }
 .room { position: fixed; inset: 0; border-radius: 0; border: 0; aspect-ratio: auto !important; }
 .score { top: 40px; right: 56px; }
 .score .n { font-size: 96px; } .score .l, .score .loss { font-size: 15px; }
-.story { left: 56px; right: 56px; bottom: 56px; font-size: 40px; line-height: 1.2; text-shadow: 0 2px 18px #000; }
-.room .phone { top: 230px; bottom: auto; left: auto; right: 56px; transform: none; width: 480px; }
-.phone .b { font-size: 19px; } .phone .w { font-size: 15px; display: block !important; } .phone .h { font-size: 13px; }
-#title { position: fixed; top: 64px; left: 56px; z-index: 5; font: 500 40px/1.15 "Inter Tight", system-ui, sans-serif; color: #f5f5f7; max-width: 60%; }
+.av-story { left: 56px; right: 56px; bottom: 56px; font-size: 40px; line-height: 1.2; text-shadow: 0 2px 18px #000; }
+.room .av-phone { top: 230px; bottom: auto; left: auto; right: 56px; transform: none; width: 480px; }
+.av-phone .b { font-size: 19px; } .av-phone .w { font-size: 15px; display: block !important; } .av-phone .h { font-size: 13px; }
+#title { position: fixed; top: 64px; left: 56px; z-index: 5; font: 500 40px/1.15 "Inter Tight", system-ui, sans-serif; color: #f4f5f7; max-width: 60%; }
 #title small { display: block; font: 500 15px/2.2 "Inter Tight", system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #8ec5ff; }
 #title small.off { color: #ff8a7a; }
 #card { position: fixed; inset: 0; z-index: 10; display: grid; place-content: center; justify-items: center; text-align: center; gap: 22px; padding: 0 60px;
@@ -52,9 +53,9 @@ body { padding: 0 !important; overflow: hidden; }
 #card small { font: 500 17px/1.5 "Inter Tight", system-ui, sans-serif; color: #a8a8ad; letter-spacing: .06em; }
 """
 VERTICAL_CSS = """
-.score { top: 220px; } .story { font-size: 46px; bottom: 120px; }
+.score { top: 220px; } .av-story { font-size: 46px; bottom: 120px; }
 #title { top: 56px; max-width: none; right: 56px; font-size: 46px; }
-.room .phone { left: 56px; right: 56px; width: auto; bottom: 330px; }
+.room .av-phone { left: 56px; right: 56px; width: auto; bottom: 330px; }
 #card h1 { font-size: 120px; } #card p { font-size: 44px; } #card .row { flex-direction: column; align-items: center; gap: 10px; }
 """
 

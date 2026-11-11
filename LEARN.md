@@ -93,6 +93,12 @@ in plain English; read that first, then the code. After each file, do the exerci
   README GIF. Each step shows one plain sentence, written by `story()` in `ui/replay.js`.
 - `ui/build.py`: bakes everything into one file, `ui/index.html`, and scripts two showcase runs
   (a held email you deny, a sub-agent that tries to widen its mandate) through the real guard.
+  It also bakes `ui/site/index.html`, the same sections inside the portfolio's page layout
+  (shmorsi.github.io/aurvane/). The sections are written once: their words in `build.py`, their
+  markup in `ui/parts.html`, their look in `ui/style.css`, which uses the portfolio's colour
+  names and is scoped to `.av` so it cannot restyle the page around it. `tests/test_ui.py`
+  checks that both pages hold the same demo and that the portfolio's copy brings no palette of
+  its own.
 
 ## Ten design questions, answered
 
