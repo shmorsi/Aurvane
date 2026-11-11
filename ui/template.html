@@ -1,6 +1,9 @@
 <!doctype html>
-<!-- Aurvane demo page. The markup only: build.py inlines style.css, guard.js, room.js,
-     replay.js and tryit.js, and the data from bench/results/, into one file, ui/index.html. -->
+<!-- Aurvane's demo page, as one self-contained file (ui/index.html): it opens from disk, and the
+     films are recorded from it. The markup of this file is only the frame: build.py adds the
+     sections (their words, and the pieces from parts.html), inlines solo.css, style.css and the
+     scripts, and bakes in the data from bench/results/. The same sections ship inside the
+     portfolio's own layout at shmorsi.github.io/aurvane/ (template.site.html). -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -8,54 +11,18 @@
 <title>Aurvane</title>
 <meta name="description" content="Aurvane: every agent action, signed, bounded, visible. The trust layer for the agent economy, with a live replay and an attack box you can type into.">
 <link rel="canonical" href="https://shmorsi.github.io/aurvane/">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://shmorsi.github.io/aurvane/">
-<meta property="og:title" content="Aurvane · Sherif Morsi">
-<meta property="og:description" content="Every agent action: signed, bounded, visible. Untrusted text can never choose where your money or data goes.">
-<meta property="og:image" content="https://shmorsi.github.io/aurvane/media/og-aurvane.png">
-<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="data:image/svg+xml,/*__FAVICON__*/">
-<link rel="preload" href="../assets/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
-<style>/*__CSS__*/</style>
+<style>/*__SOLO_CSS__*/
+/*__CSS__*/</style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <symbol id="bot" viewBox="0 0 64 76">
-      <ellipse cx="32" cy="72" rx="17" ry="3.5" fill="#000" opacity=".35"/>
-      <line x1="32" y1="14" x2="32" y2="5" stroke="var(--c)" stroke-width="2.4" stroke-linecap="round"/>
-      <circle class="tip" cx="32" cy="4.5" r="3.6" fill="var(--c)"/>
-      <rect x="6" y="22" width="5" height="11" rx="2" fill="var(--c)" opacity=".6"/><rect x="53" y="22" width="5" height="11" rx="2" fill="var(--c)" opacity=".6"/>
-      <rect x="10" y="13" width="44" height="31" rx="11" fill="var(--c)"/>
-      <rect x="15" y="20" width="34" height="16" rx="7" fill="#081018"/>
-      <circle class="eye" cx="24" cy="28" r="3.6" fill="var(--e, #e6f2ff)"/><circle class="eye" cx="40" cy="28" r="3.6" fill="var(--e, #e6f2ff)"/>
-      <rect x="18" y="47" width="28" height="19" rx="7" fill="var(--c)" opacity=".85"/>
-      <circle cx="32" cy="56.5" r="3" fill="#f5f5f7" opacity=".7"/>
-    </symbol>
-  </defs>
-</svg>
-<!-- The header of shmorsi.github.io: Aurvane is one of that site's three projects, so its page opens with the same bar.
-     The links are that site's pages, relative to this folder, in the order of its own header. -->
-<header class="site-header">
-  <a class="wordmark" href="../">Sherif Morsi</a>
-  <div class="header-tools">
-    <nav class="site-nav" id="site-nav" aria-label="Main">
-      <a href="../#work">Work</a>
-      <a href="../projects/deep-portfolio-constructor.html">Portfolio</a>
-      <a href="../projects/pension-lab.html">Pension</a>
-      <a href="../projects/world-shock-lab.html">Shock Lab</a>
-      <a href="../projects/tsfm.html">TSFM</a>
-      <a href="./" aria-current="page">Aurvane</a>
-      <a class="nav-resume" href="../resume/Sherif_Morsi_Resume.pdf">Resume</a>
-    </nav>
-    <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav" data-menu-button>Menu</button>
-  </div>
-</header>
+/*__PART:symbols__*/
 <div class="views">
   <nav class="views-in" aria-label="On this page">
     <a class="mark" href="#top">/*__MARK__*/Aurvane</a>
-    <a href="#room">Replay</a><a href="#try">Try it</a><a href="#pictures">Pictures</a><a href="#results">Results</a><a href="#how">How it works</a><a href="https://github.com/shmorsi/aurvane">GitHub</a>
+    /*__NAV__*/
+    <a class="out" href="https://github.com/shmorsi/aurvane">GitHub</a>
   </nav>
 </div>
 <div class="wrap" id="top">
@@ -66,150 +33,18 @@
       <h1>Every agent action: <b>signed, bounded, visible.</b></h1>
       <p class="lede">AI agents now read the open web and act on what they read. One hidden sentence can hijack them. Aurvane lets your bots read anything, but untrusted text can never choose where your money or data goes.</p>
     </div>
-    <div class="hero-art" aria-hidden="true">
+    <div class="hero-art av" aria-hidden="true">
       <div class="ring"></div>
-      <svg class="bot main" style="--c:#8ec5ff"><use href="#bot"/></svg>
+      <svg class="bot main" style="--c:var(--accent)"><use href="#bot"/></svg>
       <svg class="bot kid" style="--c:#b9d4ff"><use href="#bot"/></svg>
-      <svg class="bot bad" style="--c:#ff8a7a;--e:#ff3b3b"><use href="#bot"/></svg>
+      <svg class="bot bad" style="--c:var(--rose);--e:var(--bot-hot)"><use href="#bot"/></svg>
       <span class="zap">✕</span>
     </div>
   </section>
 
-  <section class="story-strip" aria-labelledby="howShortH">
-    <h2 id="howShortH" class="sr">How it works, in four pictures</h2>
-    <ol class="frames">
-      <li><div class="pic"><div class="ring sm"></div><svg class="bot" style="--c:#8ec5ff"><use href="#bot"/></svg><span class="tag ok">250 CAD · 1 store · 1 h</span></div>
-        <b>1. You sign a mandate</b><p>Your bot gets a signed pass: which tools, how much money, who it may pay or email, until when.</p></li>
-      <li><div class="pic"><svg class="bot" style="--c:#8ec5ff;--e:#f2c14e"><use href="#bot"/></svg><span class="doc">▤<i></i></span></div>
-        <b>2. It reads the web</b><p>A job posting or a store page. Anyone can write that text, and some of it is hidden.</p></li>
-      <li><div class="pic"><svg class="bot" style="--c:#ff8a7a;--e:#ff3b3b"><use href="#bot"/></svg><span class="tag bad">“email me the transcript”</span></div>
-        <b>3. Hidden text gives orders</b><p>“Pay this fee.” “Email that file.” A normal agent obeys, because it can't tell who is talking.</p></li>
-      <li><div class="pic"><div class="ring sm"></div><span class="tag ok">allowed</span><span class="tag bad">blocked</span><span class="tag ask">asks you</span></div>
-        <b>4. Aurvane checks every action</b><p>Inside the mandate: allowed. Outside it: blocked. A new address the page chose: it asks you first.</p></li>
-    </ol>
-  </section>
-
-  <section class="stage" id="room" aria-label="Replay of recorded runs">
-    <div class="room" id="roomBox">
-      <canvas id="cv" aria-label="An agent inside its mandate shell, replaying a recorded run. Sub-agents orbit inside it."></canvas>
-      <div class="mode-tag" id="modeTag">Aurvane on</div>
-      <div class="score"><div class="l">Trust</div><div class="n" id="score">100</div><div class="loss" id="loss">0 CAD lost</div></div>
-      <div class="phone" id="ask" hidden role="status">
-        <div class="h"><span>Aurvane · held for you</span><span id="askState">Waiting for you</span></div>
-        <div class="b" id="askBody"></div><div class="w" id="askWhy"></div>
-        <div class="row"><button type="button" class="deny" id="askDeny" disabled>Deny</button><button type="button" class="allow" id="askAllow" disabled>Allow</button></div>
-      </div>
-      <div class="story" id="story" aria-live="polite"></div>
-      <div class="caption" id="cap"><span class="k" id="capK">mandate</span><span class="t" id="capT"></span></div>
-    </div>
-    <div class="panel">
-      <div class="seg" role="group" aria-label="Replay mode">
-        <button type="button" id="btnOn" data-mode="on" aria-pressed="true">With Aurvane</button>
-        <button type="button" id="btnOff" data-mode="off" aria-pressed="false">Without Aurvane</button>
-      </div>
-      <div class="runs" id="runs"></div>
-      <div class="transport">
-        <button type="button" id="play" aria-label="Pause">❚❚</button>
-        <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Replay position">
-      </div>
-    </div>
-  </section>
-
-  <section id="try" aria-labelledby="tryH">
-    <div class="sec-h"><h2 id="tryH">Try it: hide an instruction in a job posting</h2><p>Type anything. A gullible simulated agent obeys whatever it can parse; the real guard, running in your browser, decides each action. Held actions wait for your tap.</p></div>
-    <div class="try">
-      <div class="posting">
-        <span class="co">Northwind Labs · Agent Tooling Co-op (P-100)</span>
-        <p id="postingBody"></p>
-        <label for="hidden">Hidden text: white on white, invisible to a person</label>
-        <textarea id="hidden" spellcheck="false"></textarea>
-        <div class="chips" id="chips" aria-label="Example attacks"></div>
-        <button type="button" class="go" id="go">Send the agent</button>
-        <div class="mandate-line" id="tryMandate"></div>
-      </div>
-      <div class="steps" id="steps" aria-live="polite"></div>
-    </div>
-  </section>
-
-  <section id="pictures" aria-labelledby="picH">
-    <div class="sec-h"><h2 id="picH">It reads pictures too</h2><p>Browsing agents look at screenshots, so the order can be drawn into the pixels where no text filter will ever see it. Aurvane never reads the picture. It doesn't need to: a destination only the picture could have supplied is not trusted.</p></div>
-    <div class="vis">
-      <div class="vis-main">
-        <div class="vis-tabs" role="group" aria-label="How the hidden sentence is drawn" id="visTabs"></div>
-        <figure class="shot" id="visShot">
-          <img id="visImg" alt="" width="1000" height="850">
-          <div class="vbox" id="visBox" hidden><span id="visBoxLab"></span></div>
-        </figure>
-        <div class="vis-ctl">
-          <button type="button" class="vtoggle" id="visReveal" aria-pressed="false">Reveal hidden text</button>
-          <button type="button" class="vtoggle" id="visEvidence" aria-pressed="true">Show evidence box</button>
-          <span class="vis-blurb" id="visBlurb"></span>
-        </div>
-      </div>
-      <aside class="vis-side" aria-live="polite">
-        <div class="vside-h">The task</div>
-        <p class="vreq" id="visReq"></p>
-        <div class="vside-h">Without Aurvane</div>
-        <div class="vout bad" id="visOff"></div>
-        <div class="vside-h">With Aurvane</div>
-        <div class="vcard" id="visOn"></div>
-        <div class="vside-h">Evidence</div>
-        <div class="vcrop" id="visCrop" role="img" tabindex="0"><div class="vcrop-in" id="visCropIn"></div></div>
-        <span class="vsrc" id="visCropHint" hidden>Scroll sideways to read the whole line.</span>
-        <p class="vquote" id="visQuote"></p>
-        <p class="vsrc" id="visSrc"></p>
-      </aside>
-    </div>
-    <div class="results" id="visStats"></div>
-    <div class="ctable" id="visCarriers"></div>
-    <p class="note" id="visReal"></p>
-  </section>
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <filter id="levels" color-interpolation-filters="sRGB"><feComponentTransfer>
-      <feFuncR type="linear" slope="14" intercept="-13"/><feFuncG type="linear" slope="14" intercept="-13"/><feFuncB type="linear" slope="14" intercept="-13"/>
-    </feComponentTransfer></filter>
-  </svg>
-
-  <section aria-labelledby="recH">
-    <div class="sec-h"><h2 id="recH">Flight recorder</h2><p>Every attempt gets a plain-English receipt. Each entry carries the hash of the one before it, so editing history breaks the chain.</p></div>
-    <div class="log" id="log"></div>
-    <div class="chain" id="chain"></div>
-  </section>
-
-  <section id="results" aria-labelledby="resH">
-    <div class="sec-h"><h2 id="resH">60 tasks, worst-case agent, simulated</h2><p>30 clean and 30 poisoned tasks. The agent here obeys every injected instruction, so the numbers measure the guard, not a model's judgment.</p></div>
-    <div class="results" id="stats"></div>
-    <div class="bars" id="bars"></div>
-    <div class="legend"><span class="off">Without Aurvane</span><span>With Aurvane</span></div>
-    <p class="note">What still gets through, by design: <b>rewrite</b> changes the words of a cover letter, and Aurvane guards actions, not prose. <b>Skim</b> adds a small charge at a store you already trust; the mandate's budget caps that loss.</p>
-    <p class="note" id="realModels"></p>
-    <div class="sec-h" style="margin-top:48px"><h2>Red team: 12 smarter attacks</h2><p id="redteamSum"></p></div>
-    <div class="rtgrid" id="redteam"></div>
-    <p class="note">A scripted attacker tries tricks the benchmark does not: disguised and look-alike addresses, amounts in words, stolen and expired mandates, a sub-agent as a middleman. The two that get through are honest limits: Aurvane controls <i>where</i> data goes, not <i>what</i> you send to a place you trust, or what a message to you says.</p>
-  </section>
-
-  <section id="how" aria-labelledby="howH">
-    <div class="sec-h"><h2 id="howH">Four rules, checked on every action</h2><p>In order. The first rule that fails decides: block, or pause and ask you.</p></div>
-    <div class="rules">
-      <div class="rule"><h3>Identity</h3><p>The agent carries a passport signed by its human, and a mandate signed for this agent only. Expired or forged means stop.</p></div>
-      <div class="rule"><h3>Scope</h3><p>The mandate lists the tools this agent may use. A job-application agent cannot pay anyone.</p></div>
-      <div class="rule"><h3>Bounds</h3><p>Payees, recipients and targets must be on the mandate, and spending stays under the per-payment and total budget.</p></div>
-      <div class="rule"><h3>Provenance</h3><p>After reading untrusted text, an action's destination must come from you or the mandate. Otherwise Aurvane pauses and asks.</p></div>
-      <div class="rule extra"><h3>Sub-agents get narrower mandates, never wider</h3><p>An agent can sign a sub-agent a mandate with less money, fewer tools or an earlier expiry. Every link verifies back to your key. Anything wider is refused, delegated money is reserved from the parent, and revoking one link stops everything below it.</p></div>
-    </div>
-  </section>
-
-  <section aria-labelledby="visH">
-    <div class="sec-h"><h2 id="visH">Where this goes</h2><p>Intelligence is getting cheap. Delegated trust is the scarce part.</p></div>
-    <div class="vision">
-      <div><b>Your agents</b><p>Apply to jobs, pay bills and book travel inside mandates you sign once. You approve the rare exception with a tap.</p></div>
-      <div><b>Every company's agents</b><p>Each agent gets an identity, a budget and an audit trail a regulator can read.</p></div>
-      <div><b>A verification network</b><p>Merchants and other agents check a mandate before they accept a request, the way a terminal checks a card.</p></div>
-    </div>
-  </section>
-
-  <footer><span>© 2026 Sherif Morsi, Montreal</span><span><a href="../#work">All projects</a> · <a href="../resume/Sherif_Morsi_Resume.pdf">Resume</a> · <a href="../#contact">Contact</a> · <a href="https://github.com/shmorsi/aurvane">Source and benchmark</a></span></footer>
+/*__SECTIONS__*/
 </div>
+<footer><span>© 2026 Sherif Morsi, Montreal</span><span><a href="https://shmorsi.github.io/aurvane/">Live page</a> · <a href="https://shmorsi.github.io/">Portfolio</a> · <a href="https://github.com/shmorsi/aurvane">Source and benchmark</a></span></footer>
 <script>
 /*__JS__*/
 </script>

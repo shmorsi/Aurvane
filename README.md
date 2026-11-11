@@ -231,19 +231,21 @@ delegate(buyer, "Greedy", "x", "x", ["pay"], spend_limit=900)   # DelegationRefu
 
 Plus [`aurvane/mcp_server.py`](aurvane/mcp_server.py): Aurvane as a Model Context Protocol server, so
 Claude Desktop, Claude Code or any MCP client gets the same checkpoint. The demo page is built from
-`ui/` (markup, style, room, replay, try-it box). New to the code? Start with **[LEARN.md](LEARN.md)**.
+`ui/` (markup, style, room, replay, try-it box), twice: one self-contained file, and the page served on
+the portfolio, which wears that site's header, colours and type. New to the code? Start with
+**[LEARN.md](LEARN.md)**.
 
 ## Run it
 
 ```bash
 pip install -e ".[dev,mcp]"
-pytest -q                                     # 63 tests: rules, forgery, delegation, approvals, SDK, red team, JS parity, vision, evidence
+pytest -q                                     # 71 tests: rules, forgery, delegation, approvals, SDK, red team, JS parity, vision, evidence, the pages
 python bench/redteam.py                       # the 12 smarter attacks
 python -m aurvane.bench                       # offline, worst-case agent, about 0.5 s
 python -m aurvane.bench --suite vision        # the same tasks as screenshots
 python -m aurvane.evidence                    # evidence scoring, checked against a perfect locator
 python bench/vision/render.py                 # re-render the 60 pictures (Playwright); hashes must not change
-python ui/build.py && open ui/index.html      # the demo page: replay and try-it box
+python ui/build.py && open ui/index.html      # the demo page: replay and try-it box (also builds ui/site/index.html, the portfolio's copy)
 python ui/record.py                           # the films and the GIF (Playwright + ffmpeg)
 
 # Muse Spark on the Meta Model API: every run in both protocols, once, then the page is rebuilt.

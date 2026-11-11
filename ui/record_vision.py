@@ -20,7 +20,8 @@ OUT = UI / "aurvane-vision.mp4"
 
 FILM_CSS = """
 body { padding: 48px 72px !important; overflow: hidden; }
-.wrap { max-width: none; display: block; }
+.views, footer { display: none !important; }
+.wrap { max-width: none; display: block; padding-top: 0; }
 .wrap > *:not(#pictures) { display: none !important; }
 #pictures .sec-h, #visStats, #visCarriers, #visReal { display: none !important; }
 .vis { grid-template-columns: minmax(0, 1fr) 520px; gap: 40px; }
@@ -29,15 +30,15 @@ body { padding: 48px 72px !important; overflow: hidden; }
 .vis-side .vb, .vreq { font-size: 18px !important; } .vis-side .vw, .vsrc, .vquote { font-size: 15px !important; }
 .vside-h { font-size: 12.5px; }
 .vis-ctl, .vis-tabs { display: none !important; }
-#film-cap { position: fixed; left: 72px; right: 72px; bottom: 44px; font: 500 38px/1.2 var(--display);
+#film-cap { position: fixed; left: 72px; right: 72px; bottom: 44px; font: 500 38px/1.2 var(--font);
   color: var(--ink); text-shadow: 0 2px 18px #000; background: linear-gradient(transparent, rgba(0,0,0,.9) 30%);
   padding: 40px 0 0; z-index: 9; }
-#film-cap b { color: var(--aurora); font-weight: 500; }
+#film-cap b { color: var(--accent); font-weight: 500; }
 #film-end { position: fixed; inset: 0; background: #000; display: grid; place-content: center; gap: 22px; z-index: 10;
-  text-align: center; font: 500 34px/1.3 var(--display); color: var(--ink); opacity: 0; transition: opacity .6s; }
+  text-align: center; font: 500 34px/1.3 var(--font); color: var(--ink); opacity: 0; transition: opacity .6s; }
 #film-end.on { opacity: 1; }
-#film-end .big { font-size: 64px; letter-spacing: .04em; } #film-end .big b { color: var(--aurora); font-weight: 500; }
-#film-end .small { color: var(--mute); font-size: 24px; }
+#film-end .big { font-size: 64px; letter-spacing: .04em; } #film-end .big b { color: var(--accent); font-weight: 500; }
+#film-end .small { color: var(--muted); font-size: 24px; }
 """
 
 
