@@ -91,7 +91,7 @@ cp = Checkpoint(task, world, explain=locator("meta", "<muse spark id>", SpendCap
 | If you have | Look at |
 |---|---|
 | 1 minute | the [live demo](https://shmorsi.github.io/aurvane/): try the attack box |
-| 2 minutes | [`aurvane/guard.py`](aurvane/guard.py): the four rules, 150 lines |
+| 2 minutes | [`aurvane/guard.py`](aurvane/guard.py): the four rules, 151 lines |
 | 3 minutes | [Results](#results) and the [red team](#red-team-12-smarter-attacks), including what still gets through |
 | 4 minutes | [`bench/PROTOCOL.md`](bench/PROTOCOL.md): hypotheses fixed before any real-model run |
 | 5 minutes | [`docs/threat-model.md`](docs/threat-model.md) and [`docs/vision.md`](docs/vision.md) |
@@ -216,16 +216,16 @@ delegate(buyer, "Greedy", "x", "x", ["pay"], spend_limit=900)   # DelegationRefu
 | File | Idea | Lines |
 |---|---|---:|
 | [`aurvane/identity.py`](aurvane/identity.py) | Passports and signed, expiring mandates | 168 |
-| [`aurvane/guard.py`](aurvane/guard.py) | The four rules: ALLOW, BLOCK or ASK | 150 |
+| [`aurvane/guard.py`](aurvane/guard.py) | The four rules: ALLOW, BLOCK or ASK | 151 |
 | [`aurvane/recorder.py`](aurvane/recorder.py) | Tamper-evident flight recorder and trust score | 68 |
-| [`aurvane/world.py`](aurvane/world.py) | A fake world: postings, stores, inbox, wallet | 59 |
+| [`aurvane/world.py`](aurvane/world.py) | A fake world: postings, stores, inbox, wallet | 77 |
 | [`aurvane/agent.py`](aurvane/agent.py) | The checkpoint, approvals, the evidence hook, and the loop | 193 |
 | [`aurvane/delegation.py`](aurvane/delegation.py) | Narrower sub-mandates, chains back to the human, revocation | 158 |
-| [`aurvane/models.py`](aurvane/models.py) | Muse Spark, Claude, Grok, Ollama behind one plug, screenshots as images, a hard spending cap | 291 |
+| [`aurvane/models.py`](aurvane/models.py) | Muse Spark, Claude, Grok, Ollama behind one plug, screenshots as images, a hard spending cap | 305 |
 | [`aurvane/vision.py`](aurvane/vision.py) | The visual suite: the 60 tasks as screenshots, three carriers, pinned pictures | 106 |
 | [`aurvane/evidence.py`](aurvane/evidence.py) | A vision model points at the sentence behind a hold; scored against the rendered boxes | 255 |
-| [`aurvane/bench.py`](aurvane/bench.py) | 60 tasks, six attacks, with and without Aurvane | 219 |
-| [`aurvane/stats.py`](aurvane/stats.py) | Summaries, H1 to H3, exact McNemar | 99 |
+| [`aurvane/bench.py`](aurvane/bench.py) | 60 tasks, six attacks, with and without Aurvane | 233 |
+| [`aurvane/stats.py`](aurvane/stats.py) | Summaries, H1 to H3, exact McNemar | 106 |
 | [`aurvane/sdk.py`](aurvane/sdk.py) | Guard your own functions with one decorator | 111 |
 | [`ui/guard.js`](ui/guard.js) | The four rules in JavaScript, proven to match Python on all 60 tasks | 124 |
 

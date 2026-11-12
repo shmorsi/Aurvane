@@ -15,7 +15,6 @@ only step needed to put the measured numbers in the film.
 """
 from __future__ import annotations
 
-import glob
 import html
 import json
 import os
@@ -168,11 +167,11 @@ def slides(f):
         "built": (slide('<div class="k">Built during the hackathon</div>'
                         f'<h2 class="r">All of it. First commit <span class="a">{f["first"]}</span>.</h2>'
                         '<div class="tl r"><div class="d">Oct 30</div><div>The trust layer: mandates, four-rule guard, delegation, benchmark, red team, SDK, demo</div>'
-                        f'<div class="c">{oct30} commit{'s' * (oct30 != 1)}</div>'
+                        f'<div class="c">{oct30} commit{"s" * (oct30 != 1)}</div>'
                         '<div class="d">Nov 3</div><div>Picture attacks, Meta Model API provider, Muse Spark evidence locator</div>'
-                        f'<div class="c">{nov3} commit{'s' * (nov3 != 1)}</div>'
+                        f'<div class="c">{nov3} commit{"s" * (nov3 != 1)}</div>'
                         '<div class="d">Nov 4</div><div>Muse Spark Open on Baseten, one-shot run hardening, Muse Spark runs</div>'
-                        f'<div class="c">{later} commit{'s' * (later != 1)}</div></div>'),
+                        f'<div class="c">{later} commit{"s" * (later != 1)}</div></div>'),
                   [(0.2, "r0", "Everything in the repository was written in the building period."), (2.0, "r1"), (10.0, None)]),
         "rigor": (slide('<div class="k">Rigor</div><h2 class="r">A benchmark that only shows wins is an ad.</h2>'
                         '<ul><li class="r">Hypotheses committed <b>before the first Muse Spark call</b>, including what counts as failure.</li>'

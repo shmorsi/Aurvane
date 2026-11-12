@@ -17,6 +17,10 @@ mcp = ["mcp>=2"]
 dev = ["pytest>=8"]
 video = ["playwright>=1.45"]
 
+[project.urls]
+Homepage = "https://shmorsi.github.io/aurvane/"
+Repository = "https://github.com/shmorsi/Aurvane"
+
 [tool.setuptools]
 packages = ["aurvane"]
 
