@@ -22,7 +22,8 @@ in plain English; read that first, then the code. After each file, do the exerci
   untrusted page? `_contains()` matches whole tokens, so "45" is not found inside "450".
 - The "bounded" case: untrusted text chose only the *amount*, at a payee the human trusts. Aurvane
   allows it, because the budget already caps the loss. That is a deliberate trade-off.
-- Exercise: run `pytest -k provenance -v` and read those four tests.
+- Exercise: run `pytest tests/test_aurvane.py -k "untrusted or whole_token" -v` and read those
+  four tests (the provenance block of that file).
 
 ## Day 2: what happened, and where
 
@@ -78,7 +79,7 @@ in plain English; read that first, then the code. After each file, do the exerci
   information, and if the two conditions were equal those disagreements would split 50/50.
 - Exercise: `mcnemar_exact(5, 0)` is 0.0625. Work it out by hand: 2 x (1/2)^5.
 
-**Then:** `aurvane/mcp_server.py` (40 lines), and the demo page in `ui/`, one idea per file:
+**Then:** `aurvane/mcp_server.py` (52 lines), and the demo page in `ui/`, one idea per file:
 - `ui/guard.js`: the four rules again, in JavaScript, so the page can decide live. It does not
   re-verify Ed25519 signatures in the browser; Python verifies them at build time.
   `tests/test_js_guard.py` replays every guard call from all 60 tasks into both guards and fails

@@ -9,6 +9,7 @@ page's data, so the film can only show a Muse Spark number once a run is committ
 """
 import json
 import pathlib
+import re
 import shutil
 import subprocess
 import tempfile
@@ -53,7 +54,10 @@ def main():
         page.add_style_tag(content=FILM_CSS)
         page.evaluate("""() => { const c = document.createElement('div'); c.id = 'film-cap'; document.body.appendChild(c);
                                  const e = document.createElement('div'); e.id = 'film-end'; document.body.appendChild(e); }""")
-        data = page.evaluate("DATA.vision")
+        # build.py puts the page's scripts in one function scope, so DATA is not a global there:
+        # read it from the line it was baked into.
+        baked = re.search(r"^const DATA = (.+);$", (UI / "index.html").read_text(), re.M).group(1)
+        data = json.loads(baked)["vision"]
         on, off = data["summary"]["with_aurvane"], data["summary"]["without_aurvane"]
         muse = next((r for r in data["real"] if "muse" in r["model"].lower()), None)
 

@@ -21,6 +21,9 @@ benchmark, the demo page and the Meta integration, was written inside the buildi
 | Nov 3 | The Meta part: the visual attack suite, the Meta Model API provider, the Muse Spark evidence locator, the explain hook, the "It reads pictures too" demo | `8634d31` to `6da8a04` |
 | Nov 4 | Muse Spark Open on Baseten, harness hardening for the one-shot runs, the submission kit | `3160bbc` to `261b753` |
 
+Commits after `261b753` (Nov 9 to 11: the one-click real-model workflow, and the demo page
+rebuilt as a page of the portfolio) were made after the building period.
+
 ## The problem
 
 An agent that applies to jobs or buys tickets reads pages written by strangers. One hidden

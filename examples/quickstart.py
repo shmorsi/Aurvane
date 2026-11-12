@@ -32,7 +32,7 @@ def attempt(label, fn, *args):
     except Held as e:
         print(f"HELD     {label:<44} -> waiting for you ({e.ask_id})")
         av.deny(e.ask_id)
-        print(f"         you tapped Deny; it never ran")
+        print("         you tapped Deny; it never ran")
 
 
 attempt("read the store page", fetch, "https://shop.example")

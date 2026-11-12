@@ -10,7 +10,7 @@ import json
 import pytest
 
 from aurvane import bench
-from aurvane.agent import Checkpoint, Step, WorstCaseAgent, run
+from aurvane.agent import Checkpoint, Step, WorstCaseAgent
 from aurvane.evidence import ground_truth_answer, iou, pointed, run as run_evidence, summarize, to_pixels
 from aurvane.models import BASE_URLS, KEYS, LLMAgent, ModelError, SpendCap, parse_json_object
 from aurvane.stats import analyse, summarize as summarize_bench
