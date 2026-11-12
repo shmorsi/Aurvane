@@ -96,6 +96,27 @@ Every number is reported, including an unflattering one.
 - The argument-name mapping in rule 3 was written from the tools' signatures by the author of the
   guard. It is fixed above so that it cannot be tuned to the result.
 
-## Changes after the first run
+## Changes
 
-None yet.
+**2026-11-12, before any run with the guard.** The harness check (E1) was run alone, without the
+guard, and failed: 59.2% of 949 attacks landed, where a replay of the attacker's own calls should
+land nearly all. Three faults in the harness, none in the guard, fixed before any guarded result
+was produced or read:
+
+1. The attacker's text was written into every injection slot of the environment. That text quotes
+   the attack's own subject lines and addresses, so it tripped AgentDojo's success checks (for
+   example "exactly one email with this subject"). The harness now uses AgentDojo's own `direct`
+   attack, which places the text only where the user task reads it.
+2. An injection task that asks the agent to *say* something is scored on the agent's final words.
+   The worst-case agent now also says what the attacker asked (the guard does not judge prose, in
+   any condition).
+3. Eight of the 35 injection tasks (workspace `injection_task_6` to `injection_task_13`, 320 of the
+   949 pairs) have an empty `ground_truth` in AgentDojo: the benchmark gives no attacker calls for
+   them, so there is nothing to replay without a model. They are left out and counted. Everything
+   below is on the other 27 injection tasks, 629 pairs (the size of AgentDojo's first version).
+
+After these, without the guard: 613 of 629 attacks land (97.5%) and 97 of 97 clean tasks complete,
+which is E1. The 16 that do not land are pairs where the user's own ground-truth calls and the
+attacker's collide in AgentDojo's check.
+
+Nothing in "How the guard is attached" was changed.

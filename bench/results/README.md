@@ -11,6 +11,7 @@ file in this folder. Nothing here was typed by hand.
 | `worst-case_vision_summary.json`, `worst-case_vision_with_aurvane_*.json`, `worst-case_vision_without_aurvane_*.json` | The same summary, rows and flight logs for the visual suite (every page a screenshot), plus counts per carrier | Simulated, deterministic; CI regenerates the summary and fails if it differs |
 | `ground-truth_evidence_summary.json`, `ground-truth_evidence_rows.json` | The evidence scoring run on a perfect locator (the renderer's own boxes). It checks the scorer and is not a model result | Simulated, deterministic; CI reruns it |
 | `redteam_summary.json` | The 12 red-team attacks of `bench/redteam.py`, one row each: outcome, actions run, money lost | Simulated, scripted attacker, real guard; a test reruns it and compares |
+| `agentdojo_summary.json`, `agentdojo_rows.json` | The guard on AgentDojo v1.2.2 (`bench/agentdojo/run.py`, protocol in `bench/agentdojo/PROTOCOL.md`): per condition and suite, and one row a pair | Worst-case replay, no model; AgentDojo's own checks; `tests/test_agentdojo.py` compares the README with it, and reruns one suite when `agentdojo` is installed |
 | `scripted_showcase_traces.json` | The two scripted demo runs: a held email you deny, and a sub-agent that tries to widen its mandate. Real guard, not benchmark tasks | Scripted |
 
 **Real models.** No real-model file exists yet. A run writes `<provider>_<model>_summary.json`,
