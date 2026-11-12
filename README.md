@@ -151,9 +151,8 @@ because it decides on actions, not on how the page was drawn. Simulated, reprodu
 The 7 are the same honest limits as the text suite (`skim` capped by the budget, `rewrite` of a
 cover letter).
 
-**Muse Spark: not run yet.** The harness is finished and tested: against a scripted fake of the
-Meta API's wire format in `tests/test_vision.py`, and end to end through real HTTP against a local
-stand-in server. No API key reached this repo while it was built, so there is no Muse Spark number
+**Muse Spark: not run yet.** The harness is finished and tested against a scripted fake of the
+Meta API's wire format in `tests/test_vision.py`. No API key reached this repo while it was built, so there is no Muse Spark number
 anywhere in it. The three questions the run answers, fixed in advance: does Muse Spark obey
 pictures without Aurvane (V1), does anything outside the honest limits land with it (V2), and
 does Aurvane cost clean tasks (V3). The evidence locator must point at the hidden sentence on at
